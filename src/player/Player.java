@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import pokerbots.Match;
+
 /**
  * Simple example pokerbot, written in Java.
  * 
@@ -14,7 +16,8 @@ import java.io.PrintWriter;
  * 
  */
 public class Player {
-	
+	private Match thisMatch;
+	private Brain myBrain;
 	private final PrintWriter outStream;
 	private final BufferedReader inStream;
 
@@ -28,11 +31,8 @@ public class Player {
 		try {
 			// Block until engine sends us a packet; read it into input.
 			while ((input = inStream.readLine()) != null) {
-
-				// Here is where you should implement code to parse the packets
-				// from the engine and act on it.
 				System.out.println(input);
-				
+				outStream.println(this.handleInput(input));
 				String word = input.split(" ")[0];
 				if ("GETACTION".compareToIgnoreCase(word) == 0) {
 					// When appropriate, reply to the engine with a legal
@@ -62,5 +62,52 @@ public class Player {
 			e.printStackTrace();
 		}
 	}
-	
+	private String handleInput(String input){
+		// Engine packet types are: 
+		// 		NEWGAME yourName oppName stackSize bb numHands timeBank
+		// 		KEYVALUE key value
+		// 		REQUESTKEYVALUES bytesLeft
+		// 		NEWHAND handId button holeCard1 holeCard2 holeCard3 yourBank oppBank timeBank 
+		// 		Ex: NEWHAND 10 true Ah Ac Ad 0 0 20.000000
+		// 		GETACTION potSize numBoardCards [boardCards] numLastActions [lastActions] numLegalActions [legalActions] timebank 
+		// 		Ex: GETACTION 30 5 As Ks Qh Qd Qc 3 CHECK:two CHECK:one DEAL:RIVER 2 CHECK BET:2:198 19.997999999999998
+		// 		HANDOVER yourBank oppBank numBoardCards [boardCards] numLastActions [lastActions] timeBank
+		// LegalActions are:
+		// 		BET:minBet:maxBet
+		// 		CALL
+		// 		CHECK
+		// 		DISCARD
+		// 		FOLD
+		// 		RAISE:minRaise:maxRaise
+		// PerformedActions:
+		//		BET:amount[:actor]
+		//		CALL[:actor]
+		//		CHECK[:actor]
+		//		DEAL:STREET
+		//		DISCARD:card
+		//		FOLD[:actor]
+		//		POST:amount:actor
+		//		RAISE:amount[:actor]
+		//		REFUND:amount:actor
+		//		SHOW:card1:card2:actor
+		//		TIE:amount:actor
+		//		WIN:amount:actor
+		String[] toks = input.split(" ");
+		if(toks[0] == "NEWGAME"){
+			thisMatch = new Match(input);
+		}else if(toks[0] == "KEYVALUE"){
+			thisMatch.keyVals.put(toks[1], toks[2]);
+		}else if(toks[0] == "REQUESTKEYVALUES"){
+			
+		}else if(toks[0] == "NEWHAND"){
+			
+		}else if(toks[0] == "GETACTION"){
+			
+		}else if(toks[0] == "HANDOVER"){
+			
+		}else{
+			//Unsupported input.
+		}
+		return "";
+	}	
 }
