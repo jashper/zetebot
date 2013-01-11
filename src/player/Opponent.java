@@ -1,4 +1,4 @@
-package src.player;
+package player;
 
 public class Opponent {
 	public String name;
@@ -12,19 +12,32 @@ public class Opponent {
 	public double flopBluff;
 	public double turnBluff;
 	public double riverBluff;
+	public double newWeight,oldWeight; // newWeight +oldWeight = 1
 	
-	
-	public double
 	
 	public Opponent(String _name){
 		name = _name;
 		
 	}
 	/**
+	 * Uses linear deviation to update their respective bluff.
 	 * 
-	 * @return
+	 * @param amtBet
+	 * @param probWin
+	 * @param pot
+	 * @modifies holeBluff
 	 */
-	public int estimateHandScore(){
-		
+	public void updateHoleBluff(int amtBet, int probWin, int pot){
+		holeBluff = newWeight*((amtBet-probWin*pot)/(probWin*pot)) + oldWeight*holeBluff;
 	}
+	public void updateFlopBluff(int amtBet, int probWin, int pot){
+		flopBluff = newWeight*((amtBet-probWin*pot)/(probWin*pot)) + oldWeight*flopBluff;
+	}
+	public void updateTurnBluff(int amtBet, int probWin, int pot){
+		turnBluff = newWeight*((amtBet-probWin*pot)/(probWin*pot)) + oldWeight*turnBluff;
+	}
+	public void updateRiverBluff(int amtBet, int probWin, int pot){
+		riverBluff = newWeight*((amtBet-probWin*pot)/(probWin*pot)) + oldWeight*riverBluff;
+	}
+
 }

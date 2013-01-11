@@ -1,4 +1,7 @@
 package player;
+
+import player.Match;
+
 /**
  * Figured we'd be doing enough with strategy that a dedicated class would be useful.
  * 
@@ -15,7 +18,9 @@ public class Brain {
 	public Brain(Match _match){
 		match = _match;
 	}
-	
+	public void processTurn(){
+		updateAPW(match.holeCards,match.tableCards);
+	}
 	/**
 	 *  Uses a lookup table to calculate the probability of winning at any time 
 	 *  without assuming any knowledge of the opponents hand.
@@ -49,7 +54,7 @@ public class Brain {
 	 * @return  double specifying the amount we are willing to wager based on strategy functions
 	 */
 	private double wagerAmt(){
-		
+		return expectedReturnWager();
 	}
 	/**
 	 * 

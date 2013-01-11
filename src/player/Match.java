@@ -11,6 +11,8 @@ public class Match {
 	public int maxRaise;
 	public int callAmount;
 	public int numHandsPlayed;
+	public String[] holeCards;
+	public String[] tableCards;
 	public HashMap<String,String> keyVals;
 	
 	// NEWGAME yourName oppName stackSize bb numHands timeBank

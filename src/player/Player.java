@@ -1,10 +1,9 @@
-package src.player;
+package player;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import pokerbots.Match;
 
 /**
  * Simple example pokerbot, written in Java.
