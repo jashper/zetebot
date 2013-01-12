@@ -1,5 +1,13 @@
 package player;
-
+/**
+ * A model of our opponent.
+ * Will contain a number of methods to asses the probability that they are bluffing,
+ * what their hand is, etc..
+ * TODO: Decide on a modeling strategy.
+ * TODO: Implement. 
+ * @author DC
+ *
+ */
 public class Opponent {
 	public String name;
 	public double freqBluff; //Total frequency of bluffing

@@ -5,6 +5,8 @@ import java.util.ArrayList;
  * Models the game state at any given time.
  * 
  * Could also be used to track the game between hands if we decide this is important
+ * 
+ * TODO: Finish implementation.
  * @author DC
  *
  */
@@ -16,8 +18,8 @@ public class Match {
 	public String[] holeCards;
 	public String[] tableCards;
 	public int pot;
+	public int amtToCall;
 	// Intrahand tracking variables
-	public Opponent opponent;
 	public String[] lastActions;
 	// Interhand tracking variables.
 	public HashMap<String,String> keyVals;
@@ -29,7 +31,6 @@ public class Match {
 	// NEWGAME yourName oppName stackSize bb numHands timeBank
 	public Match(String _matchInfo){
 		String[] info = _matchInfo.split(" ");
-		opponent = new Opponent(info[2]);
 		stackSize = Integer.parseInt(info[3]);
 		bb = Integer.parseInt(info[4]);
 		numHands = Integer.parseInt(info[5]);

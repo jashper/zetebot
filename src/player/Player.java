@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-import player.Brain;
+import player.ExpectedReturnStrategy;
 import player.Match;
+import player.StrategyBrain;
+import player.Opponent;
 
 /**
  * Class that handles the communication between our brain and game model and the server.
@@ -16,8 +18,11 @@ import player.Match;
  *
  */
 public class Player {
+	// Decision Making Objects
 	private Match thisMatch;
-	private Brain myBrain;
+	private StrategyBrain myBrain;
+	private Opponent opponent;
+	// Communication Objects
 	private final PrintWriter outStream;
 	private final BufferedReader inStream;
 
@@ -55,7 +60,7 @@ public class Player {
 	}
 	/**
 	 * Handles Input from the server. Makes calls to match, brain, and opponent classes as necessary.
-	 * TODO: finish getAction
+	 * TODO: Finish implementation.
 	 * @param input
 	 * @return
 	 */
@@ -72,24 +77,32 @@ public class Player {
 		String[] toks = input.split(" ");
 		if(toks[0] == "NEWGAME"){
 			thisMatch = new Match(input);
-		}else if(toks[0] == "KEYVALUE"){
+			myBrain = new ExpectedReturnStrategy(thisMatch);
+			opponent = new Opponent(toks[2]);
+		}
+		else if(toks[0] == "KEYVALUE"){
 			thisMatch.keyVals.put(toks[1], toks[2]);
-		}else if(toks[0] == "REQUESTKEYVALUES"){
+		}
+		else if(toks[0] == "REQUESTKEYVALUES"){
 			
-		}else if(toks[0] == "NEWHAND"){
+		}
+		else if(toks[0] == "NEWHAND"){
 			thisMatch.handId = new Integer(toks[1]);
 			thisMatch.haveButton = toks[2].equals("true");
 			String[] arb = {toks[3],toks[4],toks[5]};
 			thisMatch.holeCards = arb;
 			thisMatch.addBankVals(new Integer(toks[6]), new Integer(toks[7]));
-		}else if(toks[0] == "GETACTION"){
+		}
+		else if(toks[0] == "GETACTION"){
 			thisMatch.pot = new Integer(toks[1]);
 			ArrayList<String> boardCards = new ArrayList<String>(5);
 			ArrayList<String> legalActions = new ArrayList<String>(5);
 			return myBrain.getAction((String[]) legalActions.toArray()); 
-		}else if(toks[0] == "HANDOVER"){
+		}
+		else if(toks[0] == "HANDOVER"){
 			
-		}else{
+		}
+		else{
 			//Unsupported input.
 		}
 		return "NO_ACTION";
