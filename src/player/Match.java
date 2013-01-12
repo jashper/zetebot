@@ -1,28 +1,44 @@
 package player;
 import java.util.HashMap;
+import java.util.ArrayList;
+/**
+ * Models the game state at any given time.
+ * 
+ * Could also be used to track the game between hands if we decide this is important
+ * @author DC
+ *
+ */
 public class Match {
-	public String matchInfo;
-	public Opponent opponent;
+	// Game state variables
 	public int stackSize;
 	public int bb;
-	public int numHands;
-	public int pot = 0;
-	public int minRaise;
-	public int maxRaise;
-	public int callAmount;
-	public int numHandsPlayed;
+	public boolean haveButton;
 	public String[] holeCards;
 	public String[] tableCards;
+	public int pot;
+	// Intrahand tracking variables
+	public Opponent opponent;
+	public String[] lastActions;
+	// Interhand tracking variables.
 	public HashMap<String,String> keyVals;
+	public ArrayList<Integer> ourBankVals;
+	public ArrayList<Integer> oppBankVals;
+	public int numHands;
+	public int handId;
 	
 	// NEWGAME yourName oppName stackSize bb numHands timeBank
 	public Match(String _matchInfo){
-		matchInfo = _matchInfo;
 		String[] info = _matchInfo.split(" ");
 		opponent = new Opponent(info[2]);
 		stackSize = Integer.parseInt(info[3]);
 		bb = Integer.parseInt(info[4]);
 		numHands = Integer.parseInt(info[5]);
+		pot = 0;
+	}
+	
+	public void addBankVals(int ourVal,int oppVal){
+		ourBankVals.add(ourVal);
+		oppBankVals.add(oppVal);
 	}
 
 }
