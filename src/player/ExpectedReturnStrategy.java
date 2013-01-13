@@ -1,6 +1,9 @@
 package player;
 
 import java.util.Arrays;
+import java.util.Map;
+
+import tools.OddsGenerator;
 
 /**
  *  Bets based on expected return to hopefully make a slight profit.
@@ -11,8 +14,8 @@ import java.util.Arrays;
  */
 public class ExpectedReturnStrategy extends StrategyBrain{
 
-	public ExpectedReturnStrategy(Match _match) {
-		super(_match);
+	public ExpectedReturnStrategy(Match _match, OddsGenerator oddsGen, Map<String, Double> APWMap) {
+		super(_match, oddsGen, APWMap);
 	}
 	 
 	/**
@@ -28,12 +31,12 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 		
 		int[] holeInts = new int[3];
 		for (int i = 0; i < 3 ; i++) {
-			holeInts[i] = odds.stringToInt(holeCards[i]);
+			holeInts[i] = oddsGen.stringToInt(holeCards[i]);
 		}
 		
 		int[] tableInts = new int[tableCount];
 		for (int i = 0; i < tableCount; i++) {
-			tableInts[i] = odds.stringToInt(tableCards[i]);
+			tableInts[i] = oddsGen.stringToInt(tableCards[i]);
 		}
 		
 		switch (tableCount) {
@@ -44,19 +47,19 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 					lookupStr += holeInts[i];
 				}
 				abs_prob_win = APWMap.get(lookupStr);
-				break;
+				return;
 			case 3: // flop
-				abs_prob_win = odds.getFlopOdds(holeInts[0], holeInts[1], holeInts[2], 
+				abs_prob_win = oddsGen.getFlopOdds(holeInts[0], holeInts[1], holeInts[2], 
 												tableInts[0], tableInts[1], tableInts[2]);
-				break;
+				return;
 			case 4: // turn
-				abs_prob_win = odds.getTurnOdds(holeInts[0], holeInts[1], holeInts[2], 
+				abs_prob_win = oddsGen.getTurnOdds(holeInts[0], holeInts[1], holeInts[2], 
 						tableInts[0], tableInts[1], tableInts[2], tableInts[3]);
-				break;
+				return;
 			case 5: // river
-				abs_prob_win = odds.getRiverOdds(holeInts[0], holeInts[1], holeInts[2], 
+				abs_prob_win = oddsGen.getRiverOdds(holeInts[0], holeInts[1], holeInts[2], 
 						tableInts[0], tableInts[1], tableInts[2], tableInts[3], tableInts[4]);
-				break;
+				return;
 		}	
 	}
 	

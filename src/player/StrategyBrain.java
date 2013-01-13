@@ -21,14 +21,14 @@ public abstract class StrategyBrain {
 	protected Match match;
 	protected double abs_prob_win;
 	protected double weight;
-	protected Map<String, Double> APWMap;
-	protected OddsGenerator odds;
+	protected final OddsGenerator oddsGen;
+	protected final Map<String, Double> APWMap;
 	
-	public StrategyBrain(Match _match){
+	public StrategyBrain(Match _match, OddsGenerator oddsGen, Map<String, Double> APWMap){
 		 match = _match;
 		 weight = 1.0;
-		 initMaps();
-		 odds = new OddsGenerator();
+		 this.oddsGen = oddsGen;
+		 this.APWMap = APWMap;
 	 }
 
 	abstract String bet(int minBet, int maxBet);
@@ -55,22 +55,4 @@ public abstract class StrategyBrain {
 		return "FOLD";
 	}
 	
-	protected void initMaps() {
-		FileInputStream fis;
-        ObjectInputStream ois;
-        
-        try {
-			fis = new FileInputStream("APWMap.ser");
-			ois = new ObjectInputStream(fis);
-	        APWMap = (Map<String, Double>) ois.readObject();
-	        fis.close();
-	        ois.close();
-		} catch (IOException e) {
-			System.out.println("APWMap failed to load");
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			System.out.println("APWMap corrupted");
-			e.printStackTrace();
-		}
-	}
 }

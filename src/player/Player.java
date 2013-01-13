@@ -1,14 +1,18 @@
 package player;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Map;
 
 import player.ExpectedReturnStrategy;
 import player.Match;
 import player.StrategyBrain;
 import player.Opponent;
+import tools.OddsGenerator;
 
 /**
  * Class that handles the communication between our brain and game model and the server.
@@ -25,10 +29,15 @@ public class Player {
 	// Communication Objects
 	private final PrintWriter outStream;
 	private final BufferedReader inStream;
+	// Probability Related Objects
+	private final OddsGenerator oddsGen;
+	private Map<String, Double> APWMap;
 
 	public Player(PrintWriter output, BufferedReader input) {
 		this.outStream = output;
 		this.inStream = input;
+		this.oddsGen = new OddsGenerator();
+		initMaps();
 	}
 	
 	public void run() {
@@ -77,7 +86,7 @@ public class Player {
 		String[] toks = input.split(" ");
 		if(toks[0] == "NEWGAME"){
 			thisMatch = new Match(input);
-			myBrain = new ExpectedReturnStrategy(thisMatch);
+			myBrain = new ExpectedReturnStrategy(thisMatch, oddsGen, APWMap);
 			opponent = new Opponent(toks[2]);
 		}
 		else if(toks[0] == "KEYVALUE"){
@@ -107,6 +116,25 @@ public class Player {
 		}
 		return "NO_ACTION";
 	}	
+	
+	private void initMaps() {
+		FileInputStream fis;
+        ObjectInputStream ois;
+        
+        try {
+			fis = new FileInputStream("APWMap.ser");
+			ois = new ObjectInputStream(fis);
+	        APWMap = (Map<String, Double>) ois.readObject();
+	        fis.close();
+	        ois.close();
+		} catch (IOException e) {
+			System.out.println("APWMap failed to load");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			System.out.println("APWMap corrupted");
+			e.printStackTrace();
+		}
+	}
 }
 
 // LegalActions are:
