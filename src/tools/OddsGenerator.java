@@ -11,6 +11,7 @@ public class OddsGenerator {
 						27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
 						40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52};
 	
+	
 	private TwoPlusTwo rankEngine; // helper class for determining hand rank/strength
 
 	public OddsGenerator() {
@@ -83,7 +84,7 @@ public class OddsGenerator {
 
 	// given 3 hole cards and 3 flop cards, returns a boolean[] that indicates which hole card(s)
 	// 		should be discarded to maximize your chance of winning; ties/multiple-trues are possible
-	private boolean[] findDiscard(int holeCardA, int holeCardB, int holeCardC, int boardCardA, int boardCardB, int boardCardC) {
+	public boolean[] findDiscard(int holeCardA, int holeCardB, int holeCardC, int boardCardA, int boardCardB, int boardCardC) {
 		long ABRank = 0;
 		long BCRank = 0;
 		long ACRank = 0;
@@ -324,6 +325,74 @@ public class OddsGenerator {
 						gameCount++;
 					}
 				}
+			}
+		}
+		
+		return ((wins*1.0)/gameCount);
+	}
+	
+	public double getTurnOdds(int holeCardA, int holeCardB, int discardCard, int boardCardA, int boardCardB, int boardCardC, int boardCardD) {
+		long wins = 0;
+		long gameCount = 0;
+		
+		int[] cardsToRemove = {holeCardA, holeCardB, discardCard, boardCardA, boardCardB, boardCardC, boardCardD};
+		Integer[] newCards = getNewCards(cardsToRemove, ints);
+		int[] newCardsArray = new int[45];
+		for (int z = 0; z < 45; z++) {
+			newCardsArray[z] = newCards[z];
+		}
+		
+		for (int a = 0; a < 45; a++) {
+			int enemyCardA = newCards[a];
+			for (int b = a+1; b < 45; b++) {
+				int enemyCardB = newCards[b];
+				int[] newCardsToRemove = {enemyCardA, enemyCardB};
+				Integer[] finalNewCards = getNewCards(newCardsToRemove, newCardsArray);
+				
+				for (int c = 0; c < 43; c++) {
+					int boardCardE = finalNewCards[c];
+					
+					int[] myHand = {holeCardA, holeCardB, boardCardA, boardCardB, boardCardC, boardCardD, boardCardE};
+					int[] enemyHand = {enemyCardA, enemyCardB, boardCardA, boardCardB, boardCardC, boardCardD, boardCardE};
+					
+					int myRank = rankEngine.lookupHand7(myHand, 0);
+					int enemyRank = rankEngine.lookupHand7(enemyHand, 0);
+					
+					if (myRank >= enemyRank) {
+						wins++;
+					}
+					
+					gameCount++;
+				}
+			}
+		}
+		
+		return ((wins*1.0)/gameCount);
+	}
+	
+	public double getRiverOdds(int holeCardA, int holeCardB, int discardCard, int boardCardA, int boardCardB, int boardCardC, int boardCardD, int boardCardE) {
+		long wins = 0;
+		long gameCount = 0;
+		
+		int[] cardsToRemove = {holeCardA, holeCardB, discardCard, boardCardA, boardCardB, boardCardC, boardCardD, boardCardE};
+		Integer[] newCards = getNewCards(cardsToRemove, ints);
+		
+		for (int a = 0; a < 44; a++) {
+			int enemyCardA = newCards[a];
+			for (int b = a+1; b < 44; b++) {
+				int enemyCardB = newCards[b];
+				
+				int[] myHand = {holeCardA, holeCardB, boardCardA, boardCardB, boardCardC, boardCardD, boardCardE};
+				int[] enemyHand = {enemyCardA, enemyCardB, boardCardA, boardCardB, boardCardC, boardCardD, boardCardE};
+				
+				int myRank = rankEngine.lookupHand7(myHand, 0);
+				int enemyRank = rankEngine.lookupHand7(enemyHand, 0);
+				
+				if (myRank >= enemyRank) {
+					wins++;
+				}
+				
+				gameCount++;
 			}
 		}
 		

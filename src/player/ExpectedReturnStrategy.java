@@ -1,10 +1,6 @@
 package player;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  *  Bets based on expected return to hopefully make a slight profit.
@@ -22,8 +18,6 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 	/**
 	 *  Uses a lookup table to calculate the probability of winning at any time 
 	 *  without assuming any knowledge of the opponents hand.
-	 *  
-	 *  TODO: Tommy this is where your table goes.
 	 *  
 	 *  @param holeCards; cards in our hole
 	 *  @param tableCards; cards on the table
@@ -52,11 +46,16 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 				abs_prob_win = APWMap.get(lookupStr);
 				break;
 			case 3: // flop
-				abs_prob_win = odds.getFlopOdds(holeInts[0], holeInts[1], holeInts[2], tableInts[0], tableInts[1], tableInts[2]);
+				abs_prob_win = odds.getFlopOdds(holeInts[0], holeInts[1], holeInts[2], 
+												tableInts[0], tableInts[1], tableInts[2]);
 				break;
-			case 4: // TODO: turn
+			case 4: // turn
+				abs_prob_win = odds.getTurnOdds(holeInts[0], holeInts[1], holeInts[2], 
+						tableInts[0], tableInts[1], tableInts[2], tableInts[3]);
 				break;
-			case 5: // TODO: river
+			case 5: // river
+				abs_prob_win = odds.getRiverOdds(holeInts[0], holeInts[1], holeInts[2], 
+						tableInts[0], tableInts[1], tableInts[2], tableInts[3], tableInts[4]);
 				break;
 		}	
 	}

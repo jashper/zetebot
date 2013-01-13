@@ -22,7 +22,6 @@ public abstract class StrategyBrain {
 	protected double abs_prob_win;
 	protected double weight;
 	protected Map<String, Double> APWMap;
-	protected Map<String, String> DiscardMap;
 	protected OddsGenerator odds;
 	
 	public StrategyBrain(Match _match){
@@ -34,9 +33,11 @@ public abstract class StrategyBrain {
 
 	abstract String bet(int minBet, int maxBet);
 	abstract String raise(int minBet, int maxBet);
+	
 	private String discard(){
 		return "";
 	}
+	
 	public String getAction(String[] legalActions){
 		for(String action: legalActions){
 			if(action.equals("DISCARD")){
@@ -69,20 +70,6 @@ public abstract class StrategyBrain {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			System.out.println("APWMap corrupted");
-			e.printStackTrace();
-		}
-        
-        try {
-			fis = new FileInputStream("DiscardMap.ser");
-			ois = new ObjectInputStream(fis);
-	        DiscardMap = (Map<String, String>) ois.readObject();
-	        fis.close();
-	        ois.close();
-		} catch (IOException e) {
-			System.out.println("DiscardMap failed to load");
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			System.out.println("DiscardMap corrupted");
 			e.printStackTrace();
 		}
 	}

@@ -11,7 +11,6 @@ import java.util.Map;
 
 public class MapGenerator {
 	private static Map<String, Double> APWMap;
-	private static Map<String, String> DiscardMap;
 	private static OddsGenerator gen;
 	
 	static int[] ints = {1, 2, 3, 4, 5, 6, 7, 8,  9, 10, 11, 12, 13,
@@ -24,7 +23,6 @@ public class MapGenerator {
 	
 	public static void main(String[] args) {
 		APWMap = new HashMap<String, Double>();
-		DiscardMap = new HashMap<String, String>();
 		gen = new OddsGenerator();
 		
 		intlist = new ArrayList<Integer>();
@@ -40,17 +38,10 @@ public class MapGenerator {
 	
 	private static void generateMaps() throws IOException {
 		generatePreFlop();
-		generateDiscard();
 		
 		FileOutputStream fos = new FileOutputStream("APWMap.ser");
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(APWMap);
-        fos.close();
-        oos.close();
-        
-        fos = new FileOutputStream("DiscardMap.ser");
-        oos = new ObjectOutputStream(fos);
-        oos.writeObject(DiscardMap);
         fos.close();
         oos.close();
 	}
@@ -59,10 +50,42 @@ public class MapGenerator {
 		
 	}
 	
-	private static void generateDiscard() { //TODO: map with discard function
-		
-	}
+	// Takes way too long
+	/*private static void generateDiscard() {
+		long work = 0;
+		for (int a = 0; a < 52; a++) {
+			int holeCardA = intlist.get(a);
+			for (int b = a+1; b < 52; b++) {
+				System.out.println((work/1326.0)+"% of work done");
+				int holeCardB = intlist.get(b);
+				for (int c = b+1; c < 52; c++) {
+					int holeCardC = intlist.get(c);
+					
+					ArrayList<Integer> intlistB = (ArrayList<Integer>) intlist.clone();
+					intlistB.remove(a);
+					intlistB.remove(b-1);
+					intlistB.remove(c-2);
+					
+					for (int d = 0; d < 49; d++) {
+						int boardCardA = intlistB.get(d);
+						for (int e = d+1; e < 49; e++) {
+							int boardCardB = intlistB.get(e);
+							for (int f = e+1; f < 49; f++) {
+								int boardCardC = intlistB.get(f);
+								
+								boolean[] toDiscard = gen.findDiscard(holeCardA, holeCardB, holeCardC, boardCardA, boardCardB, boardCardC);
+								
+								
+							}
+						}
+					}
+				}
+				work++;
+			}
+		}
+	}*/
 	
+	// Takes way too long
 	/*private static void generatePostFlop() {
 		long work = 0;
 		for (int a = 0; a < 52; a++) {
