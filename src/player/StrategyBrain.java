@@ -1,5 +1,12 @@
 package player;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.Map;
+
+import tools.OddsGenerator;
+
 /**
  * Abstract class for our strategies.
  * Means that we only need to implement methods for how much to bet or raise by
@@ -11,6 +18,19 @@ package player;
  *
  */
 public abstract class StrategyBrain {
+	protected Match match;
+	protected double abs_prob_win;
+	protected double weight;
+	protected Map<String, Double> APWMap;
+	protected Map<String, String> DiscardMap;
+	protected OddsGenerator odds;
+	
+	public StrategyBrain(Match _match){
+		 match = _match;
+		 weight = 1.0;
+		 initMaps();
+		 odds = new OddsGenerator();
+	 }
 
 	abstract String bet(int minBet, int maxBet);
 	abstract String raise(int minBet, int maxBet);
@@ -32,5 +52,38 @@ public abstract class StrategyBrain {
 			}
 		}
 		return "FOLD";
+	}
+	
+	protected void initMaps() {
+		FileInputStream fis;
+        ObjectInputStream ois;
+        
+        try {
+			fis = new FileInputStream("APWMap.ser");
+			ois = new ObjectInputStream(fis);
+	        APWMap = (Map<String, Double>) ois.readObject();
+	        fis.close();
+	        ois.close();
+		} catch (IOException e) {
+			System.out.println("APWMap failed to load");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			System.out.println("APWMap corrupted");
+			e.printStackTrace();
+		}
+        
+        try {
+			fis = new FileInputStream("DiscardMap.ser");
+			ois = new ObjectInputStream(fis);
+	        DiscardMap = (Map<String, String>) ois.readObject();
+	        fis.close();
+	        ois.close();
+		} catch (IOException e) {
+			System.out.println("DiscardMap failed to load");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			System.out.println("DiscardMap corrupted");
+			e.printStackTrace();
+		}
 	}
 }

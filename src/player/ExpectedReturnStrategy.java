@@ -1,5 +1,11 @@
 package player;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.Arrays;
+import java.util.Map;
+
 /**
  *  Bets based on expected return to hopefully make a slight profit.
  *  weight is used to bet higher or lower than the expected return.
@@ -8,13 +14,10 @@ package player;
  *
  */
 public class ExpectedReturnStrategy extends StrategyBrain{
-	private Match match;
-	 private double abs_prob_win;
-	 private double weight;
-	 public ExpectedReturnStrategy(Match _match){
-		 match = _match;
-		 weight = 1.0;
-	 }
+
+	public ExpectedReturnStrategy(Match _match) {
+		super(_match);
+	}
 	 
 	/**
 	 *  Uses a lookup table to calculate the probability of winning at any time 
@@ -26,12 +29,40 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 	 *  @param tableCards; cards on the table
 	 *  @modifies abs_prob_win;
 	 */
-	private void updateAPW(){
-		abs_prob_win =  -1.0;
+	private void updateAPW(String[] holeCards, String[] tableCards){ //TODO: Assumes discard is the third holeCard index
+		int tableCount = tableCards.length;
+		
+		int[] holeInts = new int[3];
+		for (int i = 0; i < 3 ; i++) {
+			holeInts[i] = odds.stringToInt(holeCards[i]);
+		}
+		
+		int[] tableInts = new int[tableCount];
+		for (int i = 0; i < tableCount; i++) {
+			tableInts[i] = odds.stringToInt(tableCards[i]);
+		}
+		
+		switch (tableCount) {
+			case 0: // preFlop
+				Arrays.sort(holeInts);
+				String lookupStr = "";
+				for (int i = 0; i < 3 ; i++) {
+					lookupStr += holeInts[i];
+				}
+				abs_prob_win = APWMap.get(lookupStr);
+				break;
+			case 3: // flop
+				abs_prob_win = odds.getFlopOdds(holeInts[0], holeInts[1], holeInts[2], tableInts[0], tableInts[1], tableInts[2]);
+				break;
+			case 4: // TODO: turn
+				break;
+			case 5: // TODO: river
+				break;
+		}	
 	}
 	
 	public String bet(int minBet,int maxBet){
-		updateAPW();
+		updateAPW(match.holeCards, match.tableCards);
 		double betAmt = weight*abs_prob_win*match.pot;
 		if(minBet < betAmt ){
 			if(maxBet < betAmt){
@@ -45,7 +76,7 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 	}
 	 
 	public String raise(int minRaise, int maxRaise){
-		updateAPW();
+		updateAPW(match.holeCards, match.tableCards);
 		double raiseAmt = weight*abs_prob_win*match.pot;
 		if(minRaise < raiseAmt ){
 			if(maxRaise < raiseAmt){
@@ -58,6 +89,6 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 		}else{
 			return "FOLD";
 			}
-		}
+	}
 
 }
