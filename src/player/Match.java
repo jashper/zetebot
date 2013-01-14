@@ -15,12 +15,13 @@ public class Match {
 	public int stackSize;
 	public int bb;
 	public boolean haveButton;
-	public String[] holeCards;
-	public String[] tableCards;
+	public ArrayList<String> holeCards;
+	public ArrayList<String> tableCards;
+	public String discard;
 	public int pot;
 	public int amtToCall;
 	// Intrahand tracking variables
-	public String[] lastActions;
+	public ArrayList<String> lastActions;
 	// Interhand tracking variables.
 	public HashMap<String,String> keyVals;
 	public ArrayList<Integer> ourBankVals;
@@ -35,11 +36,22 @@ public class Match {
 		bb = Integer.parseInt(info[4]);
 		numHands = Integer.parseInt(info[5]);
 		pot = 0;
+		discard = null;
+		holeCards = new ArrayList<String>();
+		tableCards = new ArrayList<String>();
+		lastActions = new ArrayList<String>();
 	}
 	
 	public void addBankVals(int ourVal,int oppVal){
 		ourBankVals.add(ourVal);
 		oppBankVals.add(oppVal);
+	}
+	
+	public void handCleanup() {
+		holeCards.clear();
+		tableCards.clear();
+		lastActions.clear();
+		discard = null;
 	}
 
 }

@@ -98,24 +98,78 @@ public class Player {
 		else if(toks[0] == "NEWHAND"){
 			thisMatch.handId = new Integer(toks[1]);
 			thisMatch.haveButton = toks[2].equals("true");
-			String[] arb = {toks[3],toks[4],toks[5]};
-			thisMatch.holeCards = arb;
+			thisMatch.holeCards.add(toks[3]);
+			thisMatch.holeCards.add(toks[4]);
+			thisMatch.holeCards.add(toks[5]);
 			thisMatch.addBankVals(new Integer(toks[6]), new Integer(toks[7]));
 		}
 		else if(toks[0] == "GETACTION"){
 			thisMatch.pot = new Integer(toks[1]);
-			ArrayList<String> boardCards = new ArrayList<String>(5);
-			ArrayList<String> legalActions = new ArrayList<String>(5);
+			
+			int myTableCount = thisMatch.tableCards.size();
+			int tableCount = Integer.valueOf(toks[2]);
+			int actionIndex;
+			if (tableCount != myTableCount) {
+				for (int i = 3+myTableCount; i < tableCount; i++) {
+					thisMatch.tableCards.add(toks[i]);
+				}
+				actionIndex = 3 + tableCount;
+			} else {actionIndex = 3;}
+			
+			thisMatch.lastActions.clear();
+			int actionCount = Integer.valueOf(toks[actionIndex]);
+			int legalIndex;
+			if (actionCount > 0) {
+				for (int i = actionIndex+1; i < actionCount; i++) {
+					thisMatch.lastActions.add(toks[i]);
+				}
+				legalIndex = actionIndex + actionCount + 1;
+			} else {legalIndex = actionIndex + 1;}
+			
+			int legalCount = Integer.valueOf(toks[legalIndex]);
+			ArrayList<String> legalActions = new ArrayList<String>();
+			if (legalCount > 0) {
+				for (int i = legalIndex+1; i < legalCount; i++) {
+					legalActions.add(toks[i]);
+				}
+			}
+			
+			if (tableCount == 3 && thisMatch.discard == null) {
+				findDiscard();
+			}
+			
 			return myBrain.getAction((String[]) legalActions.toArray()); 
 		}
 		else if(toks[0] == "HANDOVER"){
-			
+			thisMatch.handCleanup();
 		}
 		else{
 			//Unsupported input.
 		}
 		return "NO_ACTION";
 	}	
+	
+	private void findDiscard() {
+		int[] holeCards = new int[3];
+		int[] tableCards = new int[3];
+		for (int i = 0; i < 3; i++) {
+			holeCards[i] = oddsGen.stringToInt(thisMatch.holeCards.get(i));
+			tableCards[i] = oddsGen.stringToInt(thisMatch.tableCards.get(i));
+		}
+		boolean[] odds = oddsGen.findDiscard(holeCards[0], holeCards[1], holeCards[2], 
+											tableCards[0], tableCards[1], tableCards[2]);
+		
+		int firstTrue = 0;
+		for (int i = 0; i < 3; i++) {
+			if (odds[i]) {
+				firstTrue = i;
+				break;
+			}
+		}
+		
+		thisMatch.discard = thisMatch.holeCards.get(firstTrue);
+		thisMatch.holeCards.remove(firstTrue);
+	}
 	
 	private void initMaps() {
 		FileInputStream fis;

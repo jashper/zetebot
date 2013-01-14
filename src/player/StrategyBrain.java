@@ -12,7 +12,6 @@ import tools.OddsGenerator;
  * Means that we only need to implement methods for how much to bet or raise by
  * when we build new strategies.
  * 
- * TODO: I assume we'll use the same strategy for discard every time. Tommy this is your table again.
  * TODO: Reimplement getAction. It's a mess right now.
  * @author DC
  *
@@ -35,10 +34,11 @@ public abstract class StrategyBrain {
 	abstract String raise(int minBet, int maxBet);
 	
 	private String discard(){
-		return "";
+		return ("DISCARD:" + match.discard);
 	}
 	
 	public String getAction(String[] legalActions){
+		
 		for(String action: legalActions){
 			if(action.equals("DISCARD")){
 				return discard();//If this is a legal action it will be the only legal action
