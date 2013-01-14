@@ -14,6 +14,7 @@ public class Match {
 	// Game state variables
 	public int stackSize;
 	public int bb;
+	public int numHands;
 	public boolean haveButton;
 	public ArrayList<String> holeCards;
 	public ArrayList<String> tableCards;
@@ -28,7 +29,6 @@ public class Match {
 	public HashMap<String,String> keyVals;
 	public ArrayList<Integer> ourBankVals;
 	public ArrayList<Integer> oppBankVals;
-	public int numHands;
 	public int handId;
 	
 	// NEWGAME yourName oppName stackSize bb numHands timeBank

@@ -93,7 +93,7 @@ public class Player {
 			thisMatch.keyVals.put(toks[1], toks[2]);
 		}
 		else if(toks[0] == "REQUESTKEYVALUES"){
-			
+			return "FINISH";
 		}
 		else if(toks[0] == "NEWHAND"){
 			thisMatch.handId = new Integer(toks[1]);

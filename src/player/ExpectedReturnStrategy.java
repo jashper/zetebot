@@ -22,8 +22,6 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 	 *  Uses a lookup table to calculate the probability of winning at any time 
 	 *  without assuming any knowledge of the opponents hand.
 	 *  
-	 *  @param holeCards; cards in our hole
-	 *  @param tableCards; cards on the table
 	 *  @modifies abs_prob_win;
 	 */
 	private void updateAPW(){
