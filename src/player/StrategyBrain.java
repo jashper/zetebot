@@ -1,8 +1,5 @@
 package player;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Map;
 
 import tools.OddsGenerator;
@@ -17,17 +14,20 @@ import tools.OddsGenerator;
  *
  */
 public abstract class StrategyBrain {
-	protected Match match;
-	protected double abs_prob_win;
-	protected double weight;
+	protected final Match match;
 	protected final OddsGenerator oddsGen;
 	protected final Map<String, Double> APWMap;
+	protected final Opponent opponent;
 	
-	public StrategyBrain(Match _match, OddsGenerator oddsGen, Map<String, Double> APWMap){
-		 match = _match;
-		 weight = 1.0;
+	protected double abs_prob_win;
+	protected double weight;
+	
+	public StrategyBrain(Match _match, Opponent opponent, OddsGenerator oddsGen, Map<String, Double> APWMap){
+		 this.match = _match;
+		 this.opponent = opponent;
 		 this.oddsGen = oddsGen;
 		 this.APWMap = APWMap;
+		 weight = 1.0;
 	 }
 
 	abstract String bet(int minBet, int maxBet);

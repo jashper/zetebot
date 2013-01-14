@@ -20,8 +20,10 @@ public class Match {
 	public String discard;
 	public int pot;
 	public int amtToCall;
+	
 	// Intrahand tracking variables
 	public ArrayList<String> lastActions;
+	
 	// Interhand tracking variables.
 	public HashMap<String,String> keyVals;
 	public ArrayList<Integer> ourBankVals;

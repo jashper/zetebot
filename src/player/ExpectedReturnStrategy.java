@@ -14,8 +14,8 @@ import tools.OddsGenerator;
  */
 public class ExpectedReturnStrategy extends StrategyBrain{
 
-	public ExpectedReturnStrategy(Match _match, OddsGenerator oddsGen, Map<String, Double> APWMap) {
-		super(_match, oddsGen, APWMap);
+	public ExpectedReturnStrategy(Match _match, Opponent opponent, OddsGenerator oddsGen, Map<String, Double> APWMap) {
+		super(_match, opponent, oddsGen, APWMap);
 	}
 	 
 	/**

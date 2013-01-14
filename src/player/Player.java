@@ -86,8 +86,8 @@ public class Player {
 		String[] toks = input.split(" ");
 		if(toks[0] == "NEWGAME"){
 			thisMatch = new Match(input);
-			myBrain = new ExpectedReturnStrategy(thisMatch, oddsGen, APWMap);
 			opponent = new Opponent(toks[2]);
+			myBrain = new ExpectedReturnStrategy(thisMatch, opponent, oddsGen, APWMap);
 		}
 		else if(toks[0] == "KEYVALUE"){
 			thisMatch.keyVals.put(toks[1], toks[2]);
