@@ -81,6 +81,15 @@ public class OddsGenerator {
 		
 		return base;
 	}
+	
+	public String intToString(int card) {
+		String[] cards = {"2c", "2d", "2h", "2s", "3c", "3d", "3h", "3s", "4c", "4d", "4h", "4s", "5c", "5d", "5h", "5s",
+						"6c", "6d", "6h", "6s", "7c", "7d", "7h", "7s", "8c", "8d", "8h", "8s", "9c", "9d", "9h", "9s",
+						"Tc", "Td", "Th", "Ts", "Jc", "Jd", "Jh", "Js", "Qc", "Qd", "Qh", "Qs", "Kc", "Kd", "Kh", "Ks",
+						"Ac", "Ad", "Ah", "As",};
+		
+		return cards[card-1];
+	}
 
 	// given 3 hole cards and 3 flop cards, returns a boolean[] that indicates which hole card(s)
 	// 		should be discarded to maximize your chance of winning; ties/multiple-trues are possible
@@ -135,7 +144,7 @@ public class OddsGenerator {
 	
 	//given 3 hole cards, returns the chances for each hole card that you will end up discarding that card,
 	//		for all combinations of the flop to come
-	private double[] getDiscardOdds(int holeCardA, int holeCardB, int holeCardC) {
+	public double[] getDiscardOdds(int holeCardA, int holeCardB, int holeCardC) {
 		long aCount = 0;
 		long bCount = 0;
 		long cCount = 0;

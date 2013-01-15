@@ -69,7 +69,7 @@ public class Player {
 	}
 	/**
 	 * Handles Input from the server. Makes calls to match, brain, and opponent classes as necessary.
-	 * TODO: Finish implementation.
+	 * 
 	 * @param input
 	 * @return
 	 */
@@ -84,18 +84,18 @@ public class Player {
 		// 		Ex: GETACTION 30 5 As Ks Qh Qd Qc 3 CHECK:two CHECK:one DEAL:RIVER 2 CHECK BET:2:198 19.997999999999998
 		// 		HANDOVER yourBank oppBank numBoardCards [boardCards] numLastActions [lastActions] timeBank
 		String[] toks = input.split(" ");
-		if(toks[0] == "NEWGAME"){
+		if(toks[0].equals("NEWGAME")){
 			thisMatch = new Match(input);
 			opponent = new Opponent(toks[2]);
 			myBrain = new ExpectedReturnStrategy(thisMatch, opponent, oddsGen, APWMap);
 		}
-		else if(toks[0] == "KEYVALUE"){
+		else if(toks[0].equals("KEYVALUE")){
 			thisMatch.keyVals.put(toks[1], toks[2]);
 		}
-		else if(toks[0] == "REQUESTKEYVALUES"){
+		else if(toks[0].equals("REQUESTKEYVALUES")){
 			return "FINISH";
 		}
-		else if(toks[0] == "NEWHAND"){
+		else if(toks[0].equals("NEWHAND")){
 			thisMatch.handId = new Integer(toks[1]);
 			thisMatch.haveButton = toks[2].equals("true");
 			thisMatch.holeCards.add(toks[3]);
@@ -103,44 +103,57 @@ public class Player {
 			thisMatch.holeCards.add(toks[5]);
 			thisMatch.addBankVals(new Integer(toks[6]), new Integer(toks[7]));
 		}
-		else if(toks[0] == "GETACTION"){
+		else if(toks[0].equals("GETACTION")){
 			thisMatch.pot = new Integer(toks[1]);
 			
 			int myTableCount = thisMatch.tableCards.size();
 			int tableCount = Integer.valueOf(toks[2]);
 			int actionIndex;
 			if (tableCount != myTableCount) {
-				for (int i = 3+myTableCount; i < tableCount; i++) {
+				for (int i = 3+myTableCount; i < tableCount+3; i++) {
 					thisMatch.tableCards.add(toks[i]);
 				}
 				actionIndex = 3 + tableCount;
-			} else {actionIndex = 3;}
+			} else {actionIndex = 3 + tableCount;}
 			
 			thisMatch.lastActions.clear();
 			int actionCount = Integer.valueOf(toks[actionIndex]);
 			int legalIndex;
 			if (actionCount > 0) {
-				for (int i = actionIndex+1; i < actionCount; i++) {
+				for (int i = actionIndex+1; i < actionCount+actionIndex+1; i++) {
 					thisMatch.lastActions.add(toks[i]);
 				}
 				legalIndex = actionIndex + actionCount + 1;
 			} else {legalIndex = actionIndex + 1;}
 			
 			int legalCount = Integer.valueOf(toks[legalIndex]);
-			ArrayList<String> legalActions = new ArrayList<String>();
+			String[] legalActions = new String[legalCount];
 			if (legalCount > 0) {
-				for (int i = legalIndex+1; i < legalCount; i++) {
-					legalActions.add(toks[i]);
+				int index = 0;
+				for (int i = legalIndex+1; i < legalCount+legalIndex+1; i++) {
+					legalActions[index] = toks[i];
+					index++;
 				}
 			}
+			
+			for (String a : thisMatch.lastActions) {
+				if (a.contains("BET")) {
+					String[] aSplit = a.split(":");
+					if (aSplit[2].equals(opponent.name)) {
+						thisMatch.amtToCall = Integer.valueOf(aSplit[1]);
+					}
+					break;
+				}
+			}
+			
 			
 			if (tableCount == 3 && thisMatch.discard == null) {
 				findDiscard();
 			}
 			
-			return myBrain.getAction((String[]) legalActions.toArray()); 
+			return myBrain.getAction(legalActions); 
 		}
-		else if(toks[0] == "HANDOVER"){
+		else if(toks[0].equals("HANDOVER")){
 			thisMatch.handCleanup();
 		}
 		else{

@@ -1,6 +1,10 @@
 package tools;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
@@ -46,8 +50,108 @@ public class MapGenerator {
         oos.close();
 	}
 	
-	private static void generatePreFlop() { //TODO: implement after data scrape finishes
+	private static void generatePreFlop() throws IOException {
+		HashMap<String, Double> probMap = parsePokerStove();
 		
+		for (int a = 0; a < 52; a++) {
+			int holeA = ints[a];
+			System.out.println("A = "+a);
+			for (int b = a+1; b < 52; b++) {
+				int holeB = ints[b];
+				System.out.println("B = "+b);
+				for (int c = b+1; c < 52; c++) {
+					int holeC = ints[c];
+	
+					int[] ABints = {holeA, holeB};
+					int[] BCints = {holeB, holeC};
+					int[] ACints = {holeA, holeC};
+					
+					Arrays.sort(ABints);
+					Arrays.sort(BCints);
+					Arrays.sort(ACints);
+					
+					String ABKey = String.valueOf(ABints[0])+" "+String.valueOf(ABints[1])+" "+String.valueOf(holeC);
+					String BCKey = String.valueOf(BCints[0])+" "+String.valueOf(BCints[1])+" "+String.valueOf(holeA);
+					String ACKey = String.valueOf(ACints[0])+" "+String.valueOf(ACints[1])+" "+String.valueOf(holeB);
+					
+					if (probMap.containsKey(ABKey) && probMap.containsKey(BCKey) && probMap.containsKey(ACKey)) {
+						double termAB = probMap.get(ABKey);
+						double termBC = probMap.get(BCKey);
+						double termAC = probMap.get(ACKey);
+						
+						double[] odds = gen.getDiscardOdds(holeA, holeB, holeC);
+						
+						double value = termAB*odds[2] + termBC*odds[0] + termAC*odds[1];
+						
+						int[] keyInts = {holeA, holeB, holeC};
+						Arrays.sort(keyInts);
+						APWMap.put(String.valueOf(keyInts[0])+" "+String.valueOf(keyInts[1])+" "+String.valueOf(keyInts[2]), value);
+					}
+							
+				}
+			}
+		}
+	}
+	
+	private static HashMap<String, Double> parsePokerStove() throws IOException {
+		HashMap<String, Double> results = new HashMap<String, Double>();
+		
+		BufferedReader br = new BufferedReader(new FileReader("pokerstove.txt"));
+		String line = br.readLine();
+		ArrayList<String> input = new ArrayList<String>();
+        while (line != null) {
+        	input.add(line);
+            line = br.readLine();
+        }
+        br.close();
+        
+        String discard = null;
+        for (int i = 0; i < input.size(); i++) {
+        	String l = input.get(i);
+        	if (l.contains("Dead:")) {
+        		discard = l.substring(7);
+        		i = i+2;
+        	}
+        	if (l.contains("Hand 0:")) {
+        		int length = l.length();
+        		String holeCardA = l.substring(length-4, length-2);
+        		String holeCardB = l.substring(length-6, length-4);
+        		double odds = Double.valueOf(l.substring(9, 15));
+        		
+        		int[] holeCards = {gen.stringToInt(holeCardA), gen.stringToInt(holeCardB)};
+        		Arrays.sort(holeCards);
+        		int discardInt = gen.stringToInt(discard);
+        		String key = String.valueOf(holeCards[0]) + " " + String.valueOf(holeCards[1]) + " " + String.valueOf(discardInt);
+        		results.put(key, odds);
+        	}
+        }
+        
+        //sanity check
+        int count = 0;
+		for (int a = 0; a < 52; a++) {
+			int holeA = intlist.get(a);
+			for (int b = a+1; b < 52; b++) {
+				int holeB = intlist.get(b);
+				for (int c = 0; c < 50; c++) {
+					ArrayList<Integer> intlistB = (ArrayList<Integer>) intlist.clone();
+					intlistB.remove(a);
+					intlistB.remove(b-1);
+					
+					int disc = intlistB.get(c);
+					int[] holes = {holeA, holeB};
+					Arrays.sort(holes);
+					
+					String key = String.valueOf(holes[0])+" "+String.valueOf(holes[1])+" "+String.valueOf(disc);
+					
+					if (!results.containsKey(key)) {
+						count++;
+					}
+				}
+			}
+		}
+		
+		System.out.println("Total Missing: "+count);
+		return results;
 	}
 	
 	// Takes way too long
