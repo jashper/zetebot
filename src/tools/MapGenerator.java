@@ -74,20 +74,18 @@ public class MapGenerator {
 					String BCKey = String.valueOf(BCints[0])+" "+String.valueOf(BCints[1])+" "+String.valueOf(holeA);
 					String ACKey = String.valueOf(ACints[0])+" "+String.valueOf(ACints[1])+" "+String.valueOf(holeB);
 					
-					if (probMap.containsKey(ABKey) && probMap.containsKey(BCKey) && probMap.containsKey(ACKey)) {
-						double termAB = probMap.get(ABKey);
-						double termBC = probMap.get(BCKey);
-						double termAC = probMap.get(ACKey);
+					double termAB = probMap.get(ABKey);
+					double termBC = probMap.get(BCKey);
+					double termAC = probMap.get(ACKey);
+					
+					double[] odds = gen.getDiscardOdds(holeA, holeB, holeC);
+					
+					double value = termAB*odds[2] + termBC*odds[0] + termAC*odds[1];
+					
+					int[] keyInts = {holeA, holeB, holeC};
+					Arrays.sort(keyInts);
+					APWMap.put(String.valueOf(keyInts[0])+" "+String.valueOf(keyInts[1])+" "+String.valueOf(keyInts[2]), value);
 						
-						double[] odds = gen.getDiscardOdds(holeA, holeB, holeC);
-						
-						double value = termAB*odds[2] + termBC*odds[0] + termAC*odds[1];
-						
-						int[] keyInts = {holeA, holeB, holeC};
-						Arrays.sort(keyInts);
-						APWMap.put(String.valueOf(keyInts[0])+" "+String.valueOf(keyInts[1])+" "+String.valueOf(keyInts[2]), value);
-					}
-							
 				}
 			}
 		}

@@ -3,9 +3,12 @@ package player;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import player.ExpectedReturnStrategy;
@@ -87,7 +90,7 @@ public class Player {
 		if(toks[0].equals("NEWGAME")){
 			thisMatch = new Match(input);
 			opponent = new Opponent(toks[2]);
-			myBrain = new ExpectedReturnStrategy(thisMatch, opponent, oddsGen, APWMap);
+			myBrain = new ExpectedReturnStrategy(thisMatch, opponent);
 		}
 		else if(toks[0].equals("KEYVALUE")){
 			thisMatch.keyVals.put(toks[1], toks[2]);
@@ -102,6 +105,7 @@ public class Player {
 			thisMatch.holeCards.add(toks[4]);
 			thisMatch.holeCards.add(toks[5]);
 			thisMatch.addBankVals(new Integer(toks[6]), new Integer(toks[7]));
+			updateAPW();
 		}
 		else if(toks[0].equals("GETACTION")){
 			thisMatch.pot = new Integer(toks[1]);
@@ -114,6 +118,7 @@ public class Player {
 					thisMatch.tableCards.add(toks[i]);
 				}
 				actionIndex = 3 + tableCount;
+				updateAPW();
 			} else {actionIndex = 3 + tableCount;}
 			
 			thisMatch.lastActions.clear();
@@ -160,7 +165,46 @@ public class Player {
 			//Unsupported input.
 		}
 		return "NO_ACTION";
-	}	
+	}
+	
+	private void updateAPW(){
+		int holeCount = thisMatch.holeCards.size();
+		int tableCount = thisMatch.tableCards.size();
+		
+		int[] holeInts = new int[holeCount];
+		for (int i = 0; i < holeCount ; i++) {
+			holeInts[i] = oddsGen.stringToInt(thisMatch.holeCards.get(i));
+		}
+		
+		int[] tableInts = new int[tableCount];
+		for (int i = 0; i < tableCount; i++) {
+			tableInts[i] = oddsGen.stringToInt(thisMatch.tableCards.get(i));
+		}
+		
+		switch (tableCount) {
+			case 0: // preFlop
+				Arrays.sort(holeInts);
+				String lookupStr = holeInts[0] + " " + holeInts[1] + " " + holeInts[2];
+				if (APWMap.containsKey(lookupStr)) {
+					thisMatch.abs_prob_win = APWMap.get(lookupStr);
+				} else {
+					thisMatch.abs_prob_win = 0.0;
+				}
+				return;
+			case 3: // flop
+				thisMatch.abs_prob_win = oddsGen.getFlopOdds(holeInts[0], holeInts[1], oddsGen.stringToInt(thisMatch.discard), 
+												tableInts[0], tableInts[1], tableInts[2]);
+				return;
+			case 4: // turn
+				thisMatch.abs_prob_win = oddsGen.getTurnOdds(holeInts[0], holeInts[1], oddsGen.stringToInt(thisMatch.discard), 
+						tableInts[0], tableInts[1], tableInts[2], tableInts[3]);
+				return;
+			case 5: // river
+				thisMatch.abs_prob_win = oddsGen.getRiverOdds(holeInts[0], holeInts[1], oddsGen.stringToInt(thisMatch.discard), 
+						tableInts[0], tableInts[1], tableInts[2], tableInts[3], tableInts[4]);
+				return;
+		}	
+	}
 	
 	private void findDiscard() {
 		int[] holeCards = new int[3];
@@ -185,11 +229,11 @@ public class Player {
 	}
 	
 	private void initMaps() {
-		FileInputStream fis;
+		InputStream fis;
         ObjectInputStream ois;
         
         try {
-			fis = new FileInputStream("APWMap.ser");
+			fis = ClassLoader.getSystemResource("data/APWMap.ser").openStream();
 			ois = new ObjectInputStream(fis);
 	        APWMap = (Map<String, Double>) ois.readObject();
 	        fis.close();

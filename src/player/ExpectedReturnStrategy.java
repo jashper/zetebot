@@ -14,20 +14,17 @@ import tools.OddsGenerator;
  */
 public class ExpectedReturnStrategy extends StrategyBrain{
 
-	public ExpectedReturnStrategy(Match _match, Opponent opponent, OddsGenerator oddsGen, Map<String, Double> APWMap) {
-		super(_match, opponent, oddsGen, APWMap);
+	public ExpectedReturnStrategy(Match _match, Opponent opponent) {
+		super(_match, opponent);
 	}
 	 
 	/**
 	 *  Uses a lookup table to calculate the probability of winning at any time 
 	 *  without assuming any knowledge of the opponents hand.
-	 *  
-	 *  @modifies abs_prob_win;
 	 */
 	
 	public String bet(int minBet,int maxBet){
-		updateAPW();
-		double betAmt = weight*abs_prob_win*match.pot;
+		double betAmt = weight * match.abs_prob_win * match.pot;
 		if(minBet <= betAmt ){
 			if(maxBet < betAmt){
 				return "BET:"+maxBet;
@@ -40,8 +37,7 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 	}
 	
 	public String raise(int minRaise, int maxRaise){
-		updateAPW();
-		double raiseAmt = weight*abs_prob_win*match.pot;
+		double raiseAmt = weight * match.abs_prob_win * match.pot;
 		if(minRaise <= raiseAmt ){
 			if(maxRaise < raiseAmt){
 				return "RAISE:"+maxRaise;

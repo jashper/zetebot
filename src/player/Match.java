@@ -21,6 +21,8 @@ public class Match {
 	public String discard;
 	public int pot;
 	public int amtToCall;
+	public double abs_prob_win;
+	
 	
 	// Intrahand tracking variables
 	public ArrayList<String> lastActions;
@@ -46,6 +48,7 @@ public class Match {
 		lastActions = new ArrayList<String>();
 		ourBankVals = new ArrayList<Integer>();
 		oppBankVals = new ArrayList<Integer>();
+		abs_prob_win = 0;
 	}
 	
 	public void addBankVals(Integer ourVal, Integer oppVal){
@@ -60,6 +63,7 @@ public class Match {
 		discard = null;
 		pot = 0;
 		amtToCall = 0;
+		abs_prob_win = 0;
 	}
 
 }

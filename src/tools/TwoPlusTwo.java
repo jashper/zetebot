@@ -75,12 +75,12 @@ public class TwoPlusTwo {
                 + ((b[offset + 1] & 0xFF) << 8) + (b[offset] & 0xFF);
     }
  
-    static {
+    {
         int tableSize = HAND_RANK_SIZE * 4;
         byte[] b = new byte[tableSize];
         InputStream br = null;
         try {
-            br = new BufferedInputStream(new FileInputStream(HAND_RANK_DATA_FILENAME));
+            br = new BufferedInputStream(ClassLoader.getSystemResource("data/HandRanks.dat").openStream());
             int bytesRead = br.read(b, 0, tableSize);
             if (bytesRead != tableSize) {
             	System.out.println("TableError");
