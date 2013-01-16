@@ -340,6 +340,48 @@ public class OddsGenerator {
 		return ((wins*1.0)/gameCount);
 	}
 	
+	public double getFlopOddsNoDisc(int holeCardA, int holeCardB, int boardCardA, int boardCardB, int boardCardC) {
+		long wins = 0;
+		long gameCount = 0;
+		
+		int[] cardsToRemove = {holeCardA, holeCardB, boardCardA, boardCardB, boardCardC};
+		Integer[] newCards = getNewCards(cardsToRemove, ints);
+		int[] newCardsArray = new int[47];
+		for (int z = 0; z < 47; z++) {
+			newCardsArray[z] = newCards[z];
+		}
+		
+		for (int a = 0; a < 47; a++) {
+			int enemyCardA = newCards[a];
+			for (int b = a+1; b < 47; b++) {
+				int enemyCardB = newCards[b];
+				int[] newCardsToRemove = {enemyCardA, enemyCardB};
+				Integer[] finalNewCards = getNewCards(newCardsToRemove, newCardsArray);
+				
+				for (int c = 0; c < 45; c++) {
+					int boardCardD = finalNewCards[c];
+					for (int d = c+1; d < 45; d++) {
+						int boardCardE = finalNewCards[d];
+						
+						int[] myHand = {holeCardA, holeCardB, boardCardA, boardCardB, boardCardC, boardCardD, boardCardE};
+						int[] enemyHand = {enemyCardA, enemyCardB, boardCardA, boardCardB, boardCardC, boardCardD, boardCardE};
+						
+						int myRank = rankEngine.lookupHand7(myHand, 0);
+						int enemyRank = rankEngine.lookupHand7(enemyHand, 0);
+						
+						if (myRank >= enemyRank) {
+							wins++;
+						}
+						
+						gameCount++;
+					}
+				}
+			}
+		}
+		
+		return ((wins*1.0)/gameCount);
+	}
+	
 	public double getTurnOdds(int holeCardA, int holeCardB, int discardCard, int boardCardA, int boardCardB, int boardCardC, int boardCardD) {
 		long wins = 0;
 		long gameCount = 0;
@@ -379,6 +421,45 @@ public class OddsGenerator {
 		return ((wins*1.0)/gameCount);
 	}
 	
+	public double getTurnOddsNoDisc(int holeCardA, int holeCardB, int boardCardA, int boardCardB, int boardCardC, int boardCardD) {
+		long wins = 0;
+		long gameCount = 0;
+		
+		int[] cardsToRemove = {holeCardA, holeCardB, boardCardA, boardCardB, boardCardC, boardCardD};
+		Integer[] newCards = getNewCards(cardsToRemove, ints);
+		int[] newCardsArray = new int[46];
+		for (int z = 0; z < 46; z++) {
+			newCardsArray[z] = newCards[z];
+		}
+		
+		for (int a = 0; a < 46; a++) {
+			int enemyCardA = newCards[a];
+			for (int b = a+1; b < 46; b++) {
+				int enemyCardB = newCards[b];
+				int[] newCardsToRemove = {enemyCardA, enemyCardB};
+				Integer[] finalNewCards = getNewCards(newCardsToRemove, newCardsArray);
+				
+				for (int c = 0; c < 44; c++) {
+					int boardCardE = finalNewCards[c];
+					
+					int[] myHand = {holeCardA, holeCardB, boardCardA, boardCardB, boardCardC, boardCardD, boardCardE};
+					int[] enemyHand = {enemyCardA, enemyCardB, boardCardA, boardCardB, boardCardC, boardCardD, boardCardE};
+					
+					int myRank = rankEngine.lookupHand7(myHand, 0);
+					int enemyRank = rankEngine.lookupHand7(enemyHand, 0);
+					
+					if (myRank >= enemyRank) {
+						wins++;
+					}
+					
+					gameCount++;
+				}
+			}
+		}
+		
+		return ((wins*1.0)/gameCount);
+	}
+	
 	public double getRiverOdds(int holeCardA, int holeCardB, int discardCard, int boardCardA, int boardCardB, int boardCardC, int boardCardD, int boardCardE) {
 		long wins = 0;
 		long gameCount = 0;
@@ -389,6 +470,35 @@ public class OddsGenerator {
 		for (int a = 0; a < 44; a++) {
 			int enemyCardA = newCards[a];
 			for (int b = a+1; b < 44; b++) {
+				int enemyCardB = newCards[b];
+				
+				int[] myHand = {holeCardA, holeCardB, boardCardA, boardCardB, boardCardC, boardCardD, boardCardE};
+				int[] enemyHand = {enemyCardA, enemyCardB, boardCardA, boardCardB, boardCardC, boardCardD, boardCardE};
+				
+				int myRank = rankEngine.lookupHand7(myHand, 0);
+				int enemyRank = rankEngine.lookupHand7(enemyHand, 0);
+				
+				if (myRank >= enemyRank) {
+					wins++;
+				}
+				
+				gameCount++;
+			}
+		}
+		
+		return ((wins*1.0)/gameCount);
+	}
+	
+	public double getRiverOddsNoDisc(int holeCardA, int holeCardB, int boardCardA, int boardCardB, int boardCardC, int boardCardD, int boardCardE) {
+		long wins = 0;
+		long gameCount = 0;
+		
+		int[] cardsToRemove = {holeCardA, holeCardB, boardCardA, boardCardB, boardCardC, boardCardD, boardCardE};
+		Integer[] newCards = getNewCards(cardsToRemove, ints);
+		
+		for (int a = 0; a < 45; a++) {
+			int enemyCardA = newCards[a];
+			for (int b = a+1; b < 45; b++) {
 				int enemyCardB = newCards[b];
 				
 				int[] myHand = {holeCardA, holeCardB, boardCardA, boardCardB, boardCardC, boardCardD, boardCardE};

@@ -22,7 +22,7 @@ public class Match {
 	public int pot;
 	public int amtToCall;
 	public double abs_prob_win;
-	
+	public ArrayList<Integer> runningPot;
 	
 	// Intrahand tracking variables
 	public ArrayList<String> lastActions;
@@ -48,6 +48,7 @@ public class Match {
 		lastActions = new ArrayList<String>();
 		ourBankVals = new ArrayList<Integer>();
 		oppBankVals = new ArrayList<Integer>();
+		runningPot = new ArrayList<Integer>();
 		abs_prob_win = 0;
 	}
 	
@@ -60,6 +61,7 @@ public class Match {
 		holeCards.clear();
 		tableCards.clear();
 		lastActions.clear();
+		runningPot.clear();
 		discard = null;
 		pot = 0;
 		amtToCall = 0;

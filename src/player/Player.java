@@ -86,7 +86,7 @@ public class Player {
 		String[] toks = input.split(" ");
 		if(toks[0].equals("NEWGAME")){
 			thisMatch = new Match(input);
-			opponent = new Opponent(toks[2]);
+			opponent = new Opponent(toks[2], thisMatch, oddsGen);
 			myBrain = new ExpectedReturnStrategy(thisMatch, opponent);
 		}
 		else if(toks[0].equals("KEYVALUE")){
@@ -117,6 +117,9 @@ public class Player {
 				actionIndex = 3 + tableCount;
 				if (tableCount == 3) {
 					findDiscard();
+				}
+				if (tableCount == 4 || tableCount == 5) {
+					thisMatch.runningPot.add(Integer.valueOf(toks[1]) / 2);
 				}
 				updateAPW();
 			} else {actionIndex = 3 + tableCount;}
@@ -155,6 +158,22 @@ public class Player {
 			return myBrain.getAction(legalActions); 
 		}
 		else if(toks[0].equals("HANDOVER")){
+			if (input.contains("WIN")) {
+				int winStart = input.indexOf("WIN") + 4;
+				int winEnd = input.indexOf(":", winStart);
+				thisMatch.runningPot.add(Integer.valueOf(input.substring(winStart, winEnd)) / 2);
+			}
+			if (input.contains("TIE")) {
+				int winStart = input.indexOf("TIE") + 4;
+				int winEnd = input.indexOf(":", winStart);
+				thisMatch.runningPot.add(Integer.valueOf(input.substring(winStart, winEnd)) / 2);
+			}
+			if (input.contains("SHOW") && thisMatch.tableCards.size() == 5) {
+				int startIdx = input.indexOf(opponent.name);
+				startIdx -= 6;
+				String[] holeCards = {input.substring(startIdx, startIdx+2), input.substring(startIdx+3, startIdx+5)};
+				opponent.updateOpponentAPW(holeCards);
+			}
 			thisMatch.handCleanup();
 		}
 		else{
