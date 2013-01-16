@@ -1,7 +1,6 @@
 package tools;
 
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +22,6 @@ public class TwoPlusTwo {
      * SHA1: f8467e36f470c9beea98c47d661c9b2c4a13e577<br/>
      * SHA256: ad00f3976ad278f2cfd8c47b008cf4dbdefac642d70755a9f20707f8bbeb3c7e<br/>
      */
-    private static final String HAND_RANK_DATA_FILENAME = "HandRanks.dat";
     private static final int HAND_RANK_SIZE = 32487834;
     private static int HR[] = new int[HAND_RANK_SIZE];
     public static String[] HAND_RANKS = {"BAD!!", "High Card", "Pair", "Two Pair", "Three of a Kind",

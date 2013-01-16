@@ -1,9 +1,5 @@
 package player;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import tools.OddsGenerator;
 
 /**
  *  Bets based on expected return to hopefully make a slight profit.

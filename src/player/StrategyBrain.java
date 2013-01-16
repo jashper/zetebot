@@ -1,10 +1,5 @@
 package player;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import tools.OddsGenerator;
-
 /**
  * Abstract class for our strategies.
  * Means that we only need to implement methods for how much to bet or raise by

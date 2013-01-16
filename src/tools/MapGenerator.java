@@ -1,13 +1,10 @@
 package tools;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -131,6 +128,7 @@ public class MapGenerator {
 			for (int b = a+1; b < 52; b++) {
 				int holeB = intlist.get(b);
 				for (int c = 0; c < 50; c++) {
+					@SuppressWarnings("unchecked")
 					ArrayList<Integer> intlistB = (ArrayList<Integer>) intlist.clone();
 					intlistB.remove(a);
 					intlistB.remove(b-1);

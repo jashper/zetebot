@@ -1,13 +1,10 @@
 package player;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -232,6 +229,7 @@ public class Player {
 		thisMatch.holeCards.remove(firstTrue);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void initMaps() {
 		InputStream fis;
         ObjectInputStream ois;
