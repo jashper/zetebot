@@ -189,18 +189,23 @@ public class Player {
 				} else {
 					thisMatch.abs_prob_win = 0.0;
 				}
+				thisMatch.abs_prob_win /= 100.0;
+				System.out.println(thisMatch.abs_prob_win);
 				return;
 			case 3: // flop
 				thisMatch.abs_prob_win = oddsGen.getFlopOdds(holeInts[0], holeInts[1], oddsGen.stringToInt(thisMatch.discard), 
 												tableInts[0], tableInts[1], tableInts[2]);
+				System.out.println(thisMatch.abs_prob_win);
 				return;
 			case 4: // turn
 				thisMatch.abs_prob_win = oddsGen.getTurnOdds(holeInts[0], holeInts[1], oddsGen.stringToInt(thisMatch.discard), 
 						tableInts[0], tableInts[1], tableInts[2], tableInts[3]);
+				System.out.println(thisMatch.abs_prob_win);
 				return;
 			case 5: // river
 				thisMatch.abs_prob_win = oddsGen.getRiverOdds(holeInts[0], holeInts[1], oddsGen.stringToInt(thisMatch.discard), 
 						tableInts[0], tableInts[1], tableInts[2], tableInts[3], tableInts[4]);
+				System.out.println(thisMatch.abs_prob_win);
 				return;
 		}	
 	}

@@ -99,7 +99,6 @@ public class TwoPlusTwo {
         for (int i = 0; i < HAND_RANK_SIZE; i++) {
             HR[i] = littleEndianByteArrayToInt(b, i * 4);
         }
-        System.out.println("Rank lookup table initialized");
 
     }
     
