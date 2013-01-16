@@ -118,6 +118,9 @@ public class Player {
 					thisMatch.tableCards.add(toks[i]);
 				}
 				actionIndex = 3 + tableCount;
+				if (tableCount == 3) {
+					findDiscard();
+				}
 				updateAPW();
 			} else {actionIndex = 3 + tableCount;}
 			
@@ -151,10 +154,6 @@ public class Player {
 				}
 			}
 			
-			
-			if (tableCount == 3 && thisMatch.discard == null) {
-				findDiscard();
-			}
 			
 			return myBrain.getAction(legalActions); 
 		}
