@@ -29,6 +29,7 @@ public class MultiStrategy extends StrategyBrain {
 	@Override
 	public void newHand(){
 		//Uses the results of the last hand to evaluate the last strategy used.
+		//This isn't actually exponential back off but could be with some slight tweaking.
 		prob_strategies[strategy_employed.get(strategy_employed.size()-1)] 
 						+= weight*match.handResults.get(strategy_employed.size()-1);
 		if(prob_strategies[strategy_employed.get(strategy_employed.size()-1)] < 0){
