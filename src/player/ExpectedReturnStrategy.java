@@ -22,11 +22,8 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 	public String bet(int minBet,int maxBet){
 		double avrgOppAPW = getAvrgOppAPW(match.holeCards.size());
 		if (avrgOppAPW != 0.0) {
-			double avrgOppWin = getAvrgOppWin(match.holeCards.size());
-			if (avrgOppAPW <= 0.35) {
-				if (avrgOppWin >= (match.stackSize / 4)) {
-					weight *= 1.5;
-				}
+			if (avrgOppAPW <= 0.40) {
+				weight *= 2;
 			}
 			
 			if (avrgOppAPW >= 0.75) {
@@ -34,8 +31,16 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 			}
 		}
 		
-		if (match.abs_prob_win > 0.85 && avrgOppAPW < 0.5) {
-			weight *= 1.5;
+		if (match.abs_prob_win >= 0.80 && avrgOppAPW <= 0.55 && opponent.infoCount < 75) {
+			return "RAISE:"+maxBet;
+		}
+		
+		if (match.abs_prob_win <= 0.45) {
+			return "CHECK";
+		}
+		
+		if (match.abs_prob_win <= 0.6 && opponent.infoCount < 75) {
+			return "CHECK";
 		}
 		
 		double betAmt = weight * match.abs_prob_win * match.pot;
@@ -54,11 +59,8 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 	public String raise(int minRaise, int maxRaise){
 		double avrgOppAPW = getAvrgOppAPW(match.holeCards.size());
 		if (avrgOppAPW != 0.0) {
-			double avrgOppWin = getAvrgOppWin(match.holeCards.size());
-			if (avrgOppAPW <= 0.35) {
-				if (avrgOppWin >= (match.stackSize / 4)) {
-					weight *= 1.5;
-				}
+			if (avrgOppAPW <= 0.40) {
+				weight *= 2;
 			}
 			
 			if (avrgOppAPW >= 0.75) {
@@ -66,8 +68,20 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 			}
 		}
 		
-		if (match.abs_prob_win > 0.85 && avrgOppAPW < 0.5) {
-			weight *= 1.5;
+		if (match.abs_prob_win >= 0.80 && avrgOppAPW <= 0.55 && opponent.infoCount < 75) {
+			return "RAISE:"+maxRaise;
+		}
+		
+		if (match.abs_prob_win >= 0.4 && opponent.infoCount < 75) {
+			return "CALL";
+		}
+		
+		if (match.abs_prob_win - avrgOppAPW >= 0.3 && opponent.infoCount >= 75) {
+			return "CALL";
+		}
+		
+		if (avrgOppAPW - match.abs_prob_win >= 0.3 && opponent.infoCount >= 75) {
+			return "FOLD";
 		}
 		
 		double raiseAmt = weight * match.abs_prob_win * match.pot;

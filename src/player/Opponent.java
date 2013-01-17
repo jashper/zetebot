@@ -35,7 +35,7 @@ public class Opponent {
 	public double flopWin;
 	public double turnWin;
 	public double riverWin;
-	private int infoCount;
+	public int infoCount;
 	
 	
 	public Opponent(String _name, Match match, OddsGenerator oddsGen){
