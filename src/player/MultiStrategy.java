@@ -17,9 +17,10 @@ public class MultiStrategy extends StrategyBrain {
 	protected int weight;
 	public MultiStrategy(Match _match, Opponent opponent) {
 		super(_match, opponent);
-		strategies = new StrategyBrain[2];
+		strategies = new StrategyBrain[3];
 		strategies[0] = new ExpectedReturnStrategy(match,opponent);
 		strategies[1] = new RandomizedOverBet(match,opponent);
+		strategies[2] = new AggressiveStrategy(match,opponent);
 		prob_strategies = new int[strategies.length];
 		for(int i=0;i<prob_strategies.length;i++){
 			prob_strategies[i] = match.stackSize;
@@ -49,6 +50,10 @@ public class MultiStrategy extends StrategyBrain {
 				break;
 			}
 		}
+		
+	}
+	
+	public void pickNewStrat(){
 		
 	}
 	@Override

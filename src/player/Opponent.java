@@ -97,5 +97,25 @@ public class Opponent {
 		turnWin = (turnWin + match.runningPot.get(1)) / infoCount;
 		riverWin = (riverWin + match.runningPot.get(2)) / infoCount;
 	}
+	
+	/**
+	 * TODO: finish implementation of AAB
+	 * TODO: check math and thinking behind this function
+	 * 
+	 * @param n the timestep 
+	 * @return
+	 */
+	//By assuming our opponent is rational and our estimate of their APW is accurate
+	//calculates the amount our opponent is bluffing.
+	private double approxAmtBluff(int m){
+		return 0.0;
+	}
+	//Checks if the AAB is increasing or decreasing.
+	//An increase indicates our opponent is likely not bluffing, a decrease that the likely are.
+	public double bluffMetric(int n){
+		int bluff_weight = -1;
+		int bluff_const = 100;
+		return bluff_weight * (approxAmtBluff(n) + approxAmtBluff(n-2) - 2*approxAmtBluff(n-1)) + bluff_const;
+	}
 
 }

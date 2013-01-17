@@ -24,6 +24,8 @@ public class Match {
 	public double abs_prob_win;
 	public ArrayList<Integer> runningPot;
 	public ArrayList<Integer> handResults;
+	public ArrayList<Integer> opponentBets;
+	
 	
 	// Intrahand tracking variables
 	public ArrayList<String> lastActions;
