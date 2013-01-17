@@ -8,7 +8,6 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Map;
 
-import player.ExpectedReturnStrategy;
 import player.Match;
 import player.StrategyBrain;
 import player.Opponent;
@@ -87,7 +86,7 @@ public class Player {
 		if(toks[0].equals("NEWGAME")){
 			thisMatch = new Match(input);
 			opponent = new Opponent(toks[2], thisMatch, oddsGen);
-			myBrain = new ExpectedReturnStrategy(thisMatch, opponent);
+			myBrain = new MultiStrategy(thisMatch, opponent);
 		}
 		else if(toks[0].equals("KEYVALUE")){
 			thisMatch.keyVals.put(toks[1], toks[2]);
@@ -96,6 +95,7 @@ public class Player {
 			return "FINISH";
 		}
 		else if(toks[0].equals("NEWHAND")){
+			myBrain.newHand();
 			thisMatch.handId = new Integer(toks[1]);
 			thisMatch.haveButton = toks[2].equals("true");
 			thisMatch.holeCards.add(toks[3]);
@@ -162,11 +162,13 @@ public class Player {
 				int winStart = input.indexOf("WIN") + 4;
 				int winEnd = input.indexOf(":", winStart);
 				thisMatch.runningPot.add(Integer.valueOf(input.substring(winStart, winEnd)) / 2);
+				thisMatch.handResults.add(Integer.valueOf(input.substring(winStart, winEnd)) - thisMatch.stackSize);
 			}
 			if (input.contains("TIE")) {
 				int winStart = input.indexOf("TIE") + 4;
 				int winEnd = input.indexOf(":", winStart);
 				thisMatch.runningPot.add(Integer.valueOf(input.substring(winStart, winEnd)) / 2);
+				thisMatch.handResults.add(Integer.valueOf(input.substring(winStart, winEnd)) - thisMatch.stackSize);
 			}
 			if (input.contains("SHOW") && thisMatch.tableCards.size() == 5) {
 				int startIdx = input.indexOf(opponent.name);

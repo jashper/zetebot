@@ -45,6 +45,9 @@ public abstract class StrategyBrain {
 		}
 		return "FOLD";
 	}
+
+	public void newHand() {
+	}
 	
 	
 	

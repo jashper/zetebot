@@ -23,6 +23,7 @@ public class Match {
 	public int amtToCall;
 	public double abs_prob_win;
 	public ArrayList<Integer> runningPot;
+	public ArrayList<Integer> handResults;
 	
 	// Intrahand tracking variables
 	public ArrayList<String> lastActions;
@@ -50,6 +51,7 @@ public class Match {
 		oppBankVals = new ArrayList<Integer>();
 		runningPot = new ArrayList<Integer>();
 		abs_prob_win = 0;
+		handResults = new ArrayList<Integer>(0);
 	}
 	
 	public void addBankVals(Integer ourVal, Integer oppVal){
