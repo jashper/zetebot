@@ -16,25 +16,12 @@ import tools.OddsGenerator;
 public class Opponent {
 	public final String name;
 	public final Match match;
-	public double freqBluff; //Total frequency of bluffing
-	/** Each of these denotes the frequency with which this opponent was bluffing 
-	 *  at a certain point in the game weighted by how much they were bluffing.
-	 * 
-	 * Bluffing is determined by: amount_bet - abs_prob_win*pot
-	 */
-	public double holeBluff; 
-	public double flopBluff;
-	public double turnBluff;
-	public double riverBluff;
-	public double newWeight,oldWeight; // newWeight +oldWeight = 1
 	
 	private final OddsGenerator oddsGen;
 	public double flopAPW;
 	public double turnAPW;
 	public double riverAPW;
-	public double flopWin;
-	public double turnWin;
-	public double riverWin;
+
 	public int infoCount;
 	
 	
@@ -46,31 +33,10 @@ public class Opponent {
 		flopAPW = 0.0;
 		turnAPW = 0.0;
 		riverAPW = 0.0;
-		flopWin = 0.0;
-		turnWin = 0.0;
-		riverWin = 0.0;
+
 		infoCount = 0;
 	}
-	/**
-	 * Uses linear deviation to update their respective bluff.
-	 * 
-	 * @param amtBet
-	 * @param probWin
-	 * @param pot
-	 * @modifies holeBluff
-	 */
-	public void updateHoleBluff(int amtBet, int probWin, int pot){
-		holeBluff = newWeight*((amtBet-probWin*pot)/(probWin*pot)) + oldWeight*holeBluff;
-	}
-	public void updateFlopBluff(int amtBet, int probWin, int pot){
-		flopBluff = newWeight*((amtBet-probWin*pot)/(probWin*pot)) + oldWeight*flopBluff;
-	}
-	public void updateTurnBluff(int amtBet, int probWin, int pot){
-		turnBluff = newWeight*((amtBet-probWin*pot)/(probWin*pot)) + oldWeight*turnBluff;
-	}
-	public void updateRiverBluff(int amtBet, int probWin, int pot){
-		riverBluff = newWeight*((amtBet-probWin*pot)/(probWin*pot)) + oldWeight*riverBluff;
-	}
+
 	
 	public void updateOpponentAPW(String[] holeCards) {
 		infoCount++;
@@ -89,13 +55,10 @@ public class Opponent {
 		double newTurnAPW = oddsGen.getTurnOddsNoDisc(holeInts[0], holeInts[1], tableInts[0], tableInts[1], tableInts[2], tableInts[3]);
 		double newRiverAPW = oddsGen.getRiverOddsNoDisc(holeInts[0], holeInts[1], tableInts[0], tableInts[1], tableInts[2], tableInts[3], tableInts[4]);
 		
-		flopAPW = (flopAPW + newFlopAPW) / infoCount;
-		turnAPW = (turnAPW + newTurnAPW) / infoCount;
-		riverAPW = (riverAPW + newRiverAPW) / infoCount;
+		flopAPW = (1.0 / infoCount)*newFlopAPW + ((infoCount - 1.0) / infoCount) * flopAPW;
+		turnAPW = (1.0 / infoCount)*newTurnAPW + ((infoCount - 1.0) / infoCount) * turnAPW;
+		riverAPW = (1.0 / infoCount)*newRiverAPW + ((infoCount - 1.0) / infoCount) * riverAPW;
 		
-		flopWin = (flopWin + match.runningPot.get(0)) / infoCount;
-		turnWin = (turnWin + match.runningPot.get(1)) / infoCount;
-		riverWin = (riverWin + match.runningPot.get(2)) / infoCount;
 	}
 
 }

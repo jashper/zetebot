@@ -20,9 +20,10 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 	 */
 	
 	public String bet(int minBet,int maxBet){
-		double avrgOppAPW = getAvrgOppAPW(match.holeCards.size());
+		weight = 1.0;
+		double avrgOppAPW = getAvrgOppAPW(match.tableCards.size());
 		if (avrgOppAPW != 0.0) {
-			if (avrgOppAPW <= 0.40) {
+			if (avrgOppAPW <= 0.40 && match.tableCards.size() >= 3) {
 				weight *= 2;
 			}
 			
@@ -31,19 +32,24 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 			}
 		}
 		
-		if (match.abs_prob_win >= 0.80 && avrgOppAPW <= 0.55 && opponent.infoCount < 75) {
-			return "RAISE:"+maxBet;
+		System.out.println("#######ZETEAPW: "+match.playerAPW);
+		System.out.println("#######oppAPW: "+avrgOppAPW);
+		System.out.println("#######weight: "+weight);
+		
+		if (match.playerAPW >= 0.82 && avrgOppAPW <= 0.55 && opponent.infoCount >= 10) {
+			return "BET:"+maxBet;
 		}
 		
-		if (match.abs_prob_win <= 0.45) {
+		if (match.playerAPW <= 0.70 && opponent.infoCount < 10) {
 			return "CHECK";
 		}
 		
-		if (match.abs_prob_win <= 0.6 && opponent.infoCount < 75) {
+		if (match.playerAPW <= 0.65) {
 			return "CHECK";
 		}
 		
-		double betAmt = weight * match.abs_prob_win * match.pot;
+		
+		double betAmt = weight * match.playerAPW * match.pot;
 		weight = 1.0;
 		if(minBet <= betAmt ){
 			if(maxBet < betAmt){
@@ -57,9 +63,10 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 	}
 	
 	public String raise(int minRaise, int maxRaise){
-		double avrgOppAPW = getAvrgOppAPW(match.holeCards.size());
+		weight = 1.0;
+		double avrgOppAPW = getAvrgOppAPW(match.tableCards.size());
 		if (avrgOppAPW != 0.0) {
-			if (avrgOppAPW <= 0.40) {
+			if (avrgOppAPW <= 0.40  && match.tableCards.size() >= 3) {
 				weight *= 2;
 			}
 			
@@ -67,24 +74,25 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 				weight *= 0.5;
 			}
 		}
+		System.out.println("####Weight: "+weight+"####");
 		
-		if (match.abs_prob_win >= 0.80 && avrgOppAPW <= 0.55 && opponent.infoCount < 75) {
+		if (match.playerAPW >= 0.82 && avrgOppAPW <= 0.55 && opponent.infoCount >= 10) {
 			return "RAISE:"+maxRaise;
 		}
 		
-		if (match.abs_prob_win >= 0.4 && opponent.infoCount < 75) {
+		if (match.playerAPW >= 0.5 && opponent.infoCount < 10) {
 			return "CALL";
 		}
 		
-		if (match.abs_prob_win - avrgOppAPW >= 0.3 && opponent.infoCount >= 75) {
+		if (match.playerAPW - avrgOppAPW >= 0.3 && opponent.infoCount >= 10  && match.tableCards.size() >= 3) {
 			return "CALL";
 		}
 		
-		if (avrgOppAPW - match.abs_prob_win >= 0.3 && opponent.infoCount >= 75) {
+		if (avrgOppAPW - match.playerAPW >= 0.25 && opponent.infoCount >= 10) {
 			return "FOLD";
 		}
 		
-		double raiseAmt = weight * match.abs_prob_win * match.pot;
+		double raiseAmt = weight * match.playerAPW * match.pot;
 		weight = 1.0;
 		if(minRaise <= raiseAmt ){
 			if(maxRaise < raiseAmt){
@@ -111,16 +119,5 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 		return 0;
 	}
 	
-	public double getAvrgOppWin(int boardCount) {
-		switch (boardCount) {
-			case 3:
-				return opponent.flopWin;
-			case 4:
-				return opponent.turnWin;
-			case 5:
-				return opponent.riverWin;
-		}
-		return 0;
-	}
 
 }

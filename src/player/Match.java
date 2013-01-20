@@ -10,27 +10,24 @@ import java.util.ArrayList;
  *
  */
 public class Match {
-	// Game state variables
+	// Match configuration variables
 	public int stackSize;
 	public int bb;
 	public int sb;
 	public int numHands;
+	
+	// Intrahand tracking variables
 	public boolean haveButton;
+	public int pot;
+	public int amtToCall;
+	public double playerAPW;
 	public ArrayList<String> holeCards;
 	public ArrayList<String> tableCards;
 	public String discard;
-	public int pot;
-	public int amtToCall;
-	public double abs_prob_win;
-	public ArrayList<Integer> runningPot;
-	
-	// Intrahand tracking variables
 	public ArrayList<String> lastActions;
 	
 	// Interhand tracking variables.
 	public HashMap<String,String> keyVals;
-	public ArrayList<Integer> ourBankVals;
-	public ArrayList<Integer> oppBankVals;
 	public int handId;
 	
 	// NEWGAME yourName oppName stackSize bb numHands timeBank
@@ -40,32 +37,26 @@ public class Match {
 		bb = Integer.parseInt(info[4]);
 		sb = bb / 2;
 		numHands = Integer.parseInt(info[5]);
+		
 		pot = 0;
 		amtToCall = 0;
-		discard = null;
+		playerAPW = 0;
+		
 		holeCards = new ArrayList<String>();
 		tableCards = new ArrayList<String>();
+		discard = null;
 		lastActions = new ArrayList<String>();
-		ourBankVals = new ArrayList<Integer>();
-		oppBankVals = new ArrayList<Integer>();
-		runningPot = new ArrayList<Integer>();
-		abs_prob_win = 0;
-	}
-	
-	public void addBankVals(Integer ourVal, Integer oppVal){
-		ourBankVals.add(ourVal);
-		oppBankVals.add(oppVal);
 	}
 	
 	public void handCleanup() {
-		holeCards.clear();
-		tableCards.clear();
-		lastActions.clear();
-		runningPot.clear();
-		discard = null;
 		pot = 0;
 		amtToCall = 0;
-		abs_prob_win = 0;
+		playerAPW = 0;
+		
+		holeCards.clear();
+		tableCards.clear();
+		discard = null;
+		lastActions.clear();
 	}
 
 }

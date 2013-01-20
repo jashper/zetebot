@@ -101,7 +101,6 @@ public class Player {
 			thisMatch.holeCards.add(toks[3]);
 			thisMatch.holeCards.add(toks[4]);
 			thisMatch.holeCards.add(toks[5]);
-			thisMatch.addBankVals(new Integer(toks[6]), new Integer(toks[7]));
 			updateAPW();
 		}
 		else if(toks[0].equals("GETACTION")){
@@ -117,9 +116,6 @@ public class Player {
 				actionIndex = 3 + tableCount;
 				if (tableCount == 3) {
 					findDiscard();
-				}
-				if (tableCount == 4 || tableCount == 5) {
-					thisMatch.runningPot.add(Integer.valueOf(toks[1]) / 2);
 				}
 				updateAPW();
 			} else {actionIndex = 3 + tableCount;}
@@ -158,16 +154,6 @@ public class Player {
 			return myBrain.getAction(legalActions); 
 		}
 		else if(toks[0].equals("HANDOVER")){
-			if (input.contains("WIN")) {
-				int winStart = input.indexOf("WIN") + 4;
-				int winEnd = input.indexOf(":", winStart);
-				thisMatch.runningPot.add(Integer.valueOf(input.substring(winStart, winEnd)) / 2);
-			}
-			if (input.contains("TIE")) {
-				int winStart = input.indexOf("TIE") + 4;
-				int winEnd = input.indexOf(":", winStart);
-				thisMatch.runningPot.add(Integer.valueOf(input.substring(winStart, winEnd)) / 2);
-			}
 			if (input.contains("SHOW") && thisMatch.tableCards.size() == 5) {
 				int startIdx = input.indexOf(opponent.name);
 				startIdx -= 6;
@@ -201,27 +187,23 @@ public class Player {
 				Arrays.sort(holeInts);
 				String lookupStr = holeInts[0] + " " + holeInts[1] + " " + holeInts[2];
 				if (APWMap.containsKey(lookupStr)) {
-					thisMatch.abs_prob_win = APWMap.get(lookupStr);
+					thisMatch.playerAPW = APWMap.get(lookupStr);
 				} else {
-					thisMatch.abs_prob_win = 0.0;
+					thisMatch.playerAPW = 0.0;
 				}
-				thisMatch.abs_prob_win /= 100.0;
-				System.out.println(thisMatch.abs_prob_win);
+				thisMatch.playerAPW /= 100.0;
 				return;
 			case 3: // flop
-				thisMatch.abs_prob_win = oddsGen.getFlopOdds(holeInts[0], holeInts[1], oddsGen.stringToInt(thisMatch.discard), 
+				thisMatch.playerAPW = oddsGen.getFlopOdds(holeInts[0], holeInts[1], oddsGen.stringToInt(thisMatch.discard), 
 												tableInts[0], tableInts[1], tableInts[2]);
-				System.out.println(thisMatch.abs_prob_win);
 				return;
 			case 4: // turn
-				thisMatch.abs_prob_win = oddsGen.getTurnOdds(holeInts[0], holeInts[1], oddsGen.stringToInt(thisMatch.discard), 
+				thisMatch.playerAPW = oddsGen.getTurnOdds(holeInts[0], holeInts[1], oddsGen.stringToInt(thisMatch.discard), 
 						tableInts[0], tableInts[1], tableInts[2], tableInts[3]);
-				System.out.println(thisMatch.abs_prob_win);
 				return;
 			case 5: // river
-				thisMatch.abs_prob_win = oddsGen.getRiverOdds(holeInts[0], holeInts[1], oddsGen.stringToInt(thisMatch.discard), 
+				thisMatch.playerAPW = oddsGen.getRiverOdds(holeInts[0], holeInts[1], oddsGen.stringToInt(thisMatch.discard), 
 						tableInts[0], tableInts[1], tableInts[2], tableInts[3], tableInts[4]);
-				System.out.println(thisMatch.abs_prob_win);
 				return;
 		}	
 	}
