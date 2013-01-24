@@ -19,6 +19,8 @@ public class Match {
 	// Intrahand tracking variables
 	public boolean haveButton;
 	public int pot;
+	public int[] potAt; // records the amount in the pot before any new bets are made
+	public int[] oppWagerAt; // records the amount our opponent bet at a given time
 	public int amtToCall;
 	public double playerAPW;
 	public ArrayList<String> holeCards;
@@ -39,6 +41,8 @@ public class Match {
 		numHands = Integer.parseInt(info[5]);
 		
 		pot = 0;
+		potAt = new int[4];
+		oppWagerAt= new int[4];
 		amtToCall = 0;
 		playerAPW = 0;
 		
