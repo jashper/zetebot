@@ -21,6 +21,9 @@ public class Opponent {
 	public double flopAPW;
 	public double turnAPW;
 	public double riverAPW;
+	public double[] flopAPWCat;
+	public double[] turnAPWCat;
+	public double[] riverAPWCat;
 
 	public int infoCount;
 	
@@ -29,14 +32,19 @@ public class Opponent {
 	private ArrayList<Double> degree_bg;
 	private ArrayList<Double> amt_bg;
 	
+	
 	public Opponent(String _name, Match match, OddsGenerator oddsGen){
 		name = _name;
 		this.match = match;
 		this.oddsGen = oddsGen;
 		
-		flopAPW = 0.0;
-		turnAPW = 0.0;
-		riverAPW = 0.0;
+		flopAPW = 0;
+		turnAPW = 0;
+		riverAPW = 0;
+		
+		flopAPWCat = new double[9];
+		turnAPWCat = new double[9];
+		riverAPWCat = new double[9];
 
 		infoCount = 0;
 	}
@@ -55,14 +63,21 @@ public class Opponent {
 			tableInts[i] = oddsGen.stringToInt(match.tableCards.get(i));
 		}
 		
-		double newFlopAPW = oddsGen.getFlopOddsNoDisc(holeInts[0], holeInts[1], tableInts[0], tableInts[1], tableInts[2]);
-		double newTurnAPW = oddsGen.getTurnOddsNoDisc(holeInts[0], holeInts[1], tableInts[0], tableInts[1], tableInts[2], tableInts[3]);
-		double newRiverAPW = oddsGen.getRiverOddsNoDisc(holeInts[0], holeInts[1], tableInts[0], tableInts[1], tableInts[2], tableInts[3], tableInts[4]);
+		double[] newFlopAPWCat = oddsGen.getFlopOddsEnemy(holeInts[0], holeInts[1], tableInts[0], tableInts[1], tableInts[2]);
+		double[] newTurnAPWCat = oddsGen.getTurnOddsEnemy(holeInts[0], holeInts[1], tableInts[0], tableInts[1], tableInts[2], tableInts[3]);
+		double[] newRiverAPWCat = oddsGen.getRiverOddsEnemy(holeInts[0], holeInts[1], tableInts[0], tableInts[1], tableInts[2], tableInts[3], tableInts[4]);
 		
-		flopAPW = (1.0 / infoCount)*newFlopAPW + ((infoCount - 1.0) / infoCount) * flopAPW;
-		turnAPW = (1.0 / infoCount)*newTurnAPW + ((infoCount - 1.0) / infoCount) * turnAPW;
-		riverAPW = (1.0 / infoCount)*newRiverAPW + ((infoCount - 1.0) / infoCount) * riverAPW;
-		
+		flopAPW = 0;
+		turnAPW = 0;
+		riverAPW = 0;
+		for (int i = 0; i < 9; i++) {
+			flopAPWCat[i] = (1.0 / infoCount)*newFlopAPWCat[i] + ((infoCount - 1.0) / infoCount) * flopAPWCat[i];
+			flopAPW += flopAPWCat[i];
+			turnAPWCat[i] = (1.0 / infoCount)*newTurnAPWCat[i] + ((infoCount - 1.0) / infoCount) * turnAPWCat[i];
+			turnAPW += turnAPWCat[i];
+			riverAPWCat[i] = (1.0 / infoCount)*newRiverAPWCat[i] + ((infoCount - 1.0) / infoCount) * riverAPWCat[i];
+			riverAPW += riverAPWCat[i];
+		}
 	}
 	
 	// TODO: implement

@@ -22,7 +22,7 @@ public class MapGenerator {
 	private static ArrayList<Integer> intlist;
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		APWMap = new HashMap<String, Double>();
 		gen = new OddsGenerator();
 		
@@ -31,9 +31,7 @@ public class MapGenerator {
 			intlist.add(card);
 		}
 		
-		try {
-			generateMaps();
-		} catch (IOException e) {e.printStackTrace();}
+		//generateMaps();
 				
 	}
 	

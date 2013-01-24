@@ -46,6 +46,28 @@ public abstract class StrategyBrain {
 		return "FOLD";
 	}
 	
+	protected double getAvrgOppAPW(int boardCount) {
+		switch (boardCount) {
+			case 3:
+				return opponent.flopAPW;
+			case 4:
+				return opponent.turnAPW;
+			case 5:
+				return opponent.riverAPW;
+		}
+		return 0;
+	}
 	
+	protected double[] getAvrgOppAPWCat(int boardCount) {
+		switch (boardCount) {
+			case 3:
+				return opponent.flopAPWCat;
+			case 4:
+				return opponent.turnAPWCat;
+			case 5:
+				return opponent.riverAPWCat;
+		}
+		return new double[9];
+	}
 	
 }

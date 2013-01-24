@@ -25,7 +25,7 @@ public class TwoPlusTwo {
     private static final int HAND_RANK_SIZE = 32487834;
     private static int HR[] = new int[HAND_RANK_SIZE];
     public static String[] HAND_RANKS = {"BAD!!", "High Card", "Pair", "Two Pair", "Three of a Kind",
-    	"Straight", "Flush", "Full House", "Four of a Kind", "Straight Flush"};
+    	"Straight", "Flush", "Full House", "Four of a Kind", "Straight Flush", };
  
     /**
      * Calculate the poker hand rank of seven cards.

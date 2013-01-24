@@ -22,6 +22,7 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 	public String bet(int minBet,int maxBet){
 		weight = 1.0;
 		double avrgOppAPW = getAvrgOppAPW(match.tableCards.size());
+		double[] avrgOppAPWCat = getAvrgOppAPWCat(match.tableCards.size());
 		if (avrgOppAPW != 0.0) {
 			if (avrgOppAPW <= 0.40 && match.tableCards.size() >= 3) {
 				weight *= 2;
@@ -34,6 +35,9 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 		
 		System.out.println("#######ZETEAPW: "+match.playerAPW);
 		System.out.println("#######oppAPW: "+avrgOppAPW);
+		System.out.println("#######oppAPWCat: "+avrgOppAPWCat[0]+" "+avrgOppAPWCat[1]+" "+
+							avrgOppAPWCat[2]+" "+avrgOppAPWCat[3]+" "+avrgOppAPWCat[4]+" "+avrgOppAPWCat[5]+" "+
+							avrgOppAPWCat[6]+" "+avrgOppAPWCat[7]+" "+avrgOppAPWCat[8]);
 		System.out.println("#######weight: "+weight);
 		
 		if (match.playerAPW >= 0.82 && avrgOppAPW <= 0.55 && opponent.infoCount >= 10) {
@@ -65,6 +69,7 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 	public String raise(int minRaise, int maxRaise){
 		weight = 1.0;
 		double avrgOppAPW = getAvrgOppAPW(match.tableCards.size());
+		double[] avrgOppAPWCat = getAvrgOppAPWCat(match.tableCards.size());
 		if (avrgOppAPW != 0.0) {
 			if (avrgOppAPW <= 0.40  && match.tableCards.size() >= 3) {
 				weight *= 2;
@@ -74,7 +79,12 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 				weight *= 0.5;
 			}
 		}
-		System.out.println("####Weight: "+weight+"####");
+		System.out.println("#######ZETEAPW: "+match.playerAPW);
+		System.out.println("#######oppAPW: "+avrgOppAPW);
+		System.out.println("#######oppAPWCat: "+avrgOppAPWCat[0]+" "+avrgOppAPWCat[1]+" "+
+							avrgOppAPWCat[2]+" "+avrgOppAPWCat[3]+" "+avrgOppAPWCat[4]+" "+avrgOppAPWCat[5]+" "+
+							avrgOppAPWCat[6]+" "+avrgOppAPWCat[7]+" "+avrgOppAPWCat[8]);
+		System.out.println("#######weight: "+weight);
 		
 		if (match.playerAPW >= 0.82 && avrgOppAPW <= 0.55 && opponent.infoCount >= 10) {
 			return "RAISE:"+maxRaise;
@@ -105,18 +115,6 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 		}else{
 			return "FOLD";
 		}
-	}
-	
-	public double getAvrgOppAPW(int boardCount) {
-		switch (boardCount) {
-			case 3:
-				return opponent.flopAPW;
-			case 4:
-				return opponent.turnAPW;
-			case 5:
-				return opponent.riverAPW;
-		}
-		return 0;
 	}
 	
 

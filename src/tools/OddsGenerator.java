@@ -16,6 +16,9 @@ public class OddsGenerator {
 
 	public OddsGenerator() {
 		rankEngine = new TwoPlusTwo();
+		
+		//int[] cardsB = {stringToInt("Ks"), stringToInt("6c"), stringToInt("3d"), stringToInt("9s"), stringToInt("4c"), stringToInt("Ts"), stringToInt("8c")};
+		//System.out.println(rankEngine.lookupHand7(cardsB, 0) >> 12);
 	}
 	
 	// helper function for generating card combinations -> removes cards from a list of possible cards
@@ -340,9 +343,10 @@ public class OddsGenerator {
 		return ((wins*1.0)/gameCount);
 	}
 	
-	public double getFlopOddsNoDisc(int holeCardA, int holeCardB, int boardCardA, int boardCardB, int boardCardC) {
-		long wins = 0;
+	public double[] getFlopOddsEnemy(int holeCardA, int holeCardB, int boardCardA, int boardCardB, int boardCardC) {
+		long[] wins = new long[9];
 		long gameCount = 0;
+		double[] avrgWins = new double[9];
 		
 		int[] cardsToRemove = {holeCardA, holeCardB, boardCardA, boardCardB, boardCardC};
 		Integer[] newCards = getNewCards(cardsToRemove, ints);
@@ -369,8 +373,10 @@ public class OddsGenerator {
 						int myRank = rankEngine.lookupHand7(myHand, 0);
 						int enemyRank = rankEngine.lookupHand7(enemyHand, 0);
 						
+						int catIdx = (myRank >> 12) - 1;
+						
 						if (myRank >= enemyRank) {
-							wins++;
+							wins[catIdx]++;
 						}
 						
 						gameCount++;
@@ -379,7 +385,11 @@ public class OddsGenerator {
 			}
 		}
 		
-		return ((wins*1.0)/gameCount);
+		for (int i = 0; i < 9; i++) {
+			avrgWins[i] = (wins[i] * 1.0 / gameCount);
+		}
+		
+		return avrgWins;
 	}
 	
 	public double getTurnOdds(int holeCardA, int holeCardB, int discardCard, int boardCardA, int boardCardB, int boardCardC, int boardCardD) {
@@ -421,9 +431,10 @@ public class OddsGenerator {
 		return ((wins*1.0)/gameCount);
 	}
 	
-	public double getTurnOddsNoDisc(int holeCardA, int holeCardB, int boardCardA, int boardCardB, int boardCardC, int boardCardD) {
-		long wins = 0;
+	public double[] getTurnOddsEnemy(int holeCardA, int holeCardB, int boardCardA, int boardCardB, int boardCardC, int boardCardD) {
+		long[] wins = new long[9];
 		long gameCount = 0;
+		double[] avrgWins = new double[9];
 		
 		int[] cardsToRemove = {holeCardA, holeCardB, boardCardA, boardCardB, boardCardC, boardCardD};
 		Integer[] newCards = getNewCards(cardsToRemove, ints);
@@ -448,8 +459,10 @@ public class OddsGenerator {
 					int myRank = rankEngine.lookupHand7(myHand, 0);
 					int enemyRank = rankEngine.lookupHand7(enemyHand, 0);
 					
+					int catIdx = (myRank >> 12) - 1;
+					
 					if (myRank >= enemyRank) {
-						wins++;
+						wins[catIdx]++;
 					}
 					
 					gameCount++;
@@ -457,7 +470,11 @@ public class OddsGenerator {
 			}
 		}
 		
-		return ((wins*1.0)/gameCount);
+		for (int i = 0; i < 9; i++) {
+			avrgWins[i] = (wins[i] * 1.0 / gameCount);
+		}
+		
+		return avrgWins;
 	}
 	
 	public double getRiverOdds(int holeCardA, int holeCardB, int discardCard, int boardCardA, int boardCardB, int boardCardC, int boardCardD, int boardCardE) {
@@ -489,9 +506,10 @@ public class OddsGenerator {
 		return ((wins*1.0)/gameCount);
 	}
 	
-	public double getRiverOddsNoDisc(int holeCardA, int holeCardB, int boardCardA, int boardCardB, int boardCardC, int boardCardD, int boardCardE) {
-		long wins = 0;
+	public double[] getRiverOddsEnemy(int holeCardA, int holeCardB, int boardCardA, int boardCardB, int boardCardC, int boardCardD, int boardCardE) {
+		long[] wins = new long[9];
 		long gameCount = 0;
+		double[] avrgWins = new double[9];
 		
 		int[] cardsToRemove = {holeCardA, holeCardB, boardCardA, boardCardB, boardCardC, boardCardD, boardCardE};
 		Integer[] newCards = getNewCards(cardsToRemove, ints);
@@ -507,15 +525,21 @@ public class OddsGenerator {
 				int myRank = rankEngine.lookupHand7(myHand, 0);
 				int enemyRank = rankEngine.lookupHand7(enemyHand, 0);
 				
+				int catIdx = (myRank >> 12) - 1;
+				
 				if (myRank >= enemyRank) {
-					wins++;
+					wins[catIdx]++;
 				}
 				
 				gameCount++;
 			}
 		}
 		
-		return ((wins*1.0)/gameCount);
+		for (int i = 0; i < 9; i++) {
+			avrgWins[i] = (wins[i] * 1.0 / gameCount);
+		}
+		
+		return avrgWins;
 	}
 	
 }
