@@ -42,6 +42,7 @@ public class Match {
 		
 		pot = 0;
 		potAt = new int[4];
+		potAt[0] = this.bb;
 		oppWagerAt= new int[4];
 		amtToCall = 0;
 		playerAPW = 0;

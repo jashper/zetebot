@@ -63,7 +63,7 @@ public class Player {
 			outStream.close();
 			inStream.close();
 		} catch (IOException e) {
-			System.out.println("Encounterd problem shutting down connections");
+			System.out.println("Encountered problem shutting down connections");
 			e.printStackTrace();
 		}
 	}
@@ -110,6 +110,14 @@ public class Player {
 			int tableCount = Integer.valueOf(toks[2]);
 			int actionIndex;
 			if (tableCount != myTableCount) {
+				switch (tableCount){
+					case 3: thisMatch.potAt[1] = thisMatch.pot;
+							break;
+					case 4: thisMatch.potAt[1] = thisMatch.pot;
+							break;
+					case 5: thisMatch.potAt[1] = thisMatch.pot;
+							break;
+				}
 				for (int i = 3+myTableCount; i < tableCount+3; i++) {
 					thisMatch.tableCards.add(toks[i]);
 				}
@@ -159,6 +167,7 @@ public class Player {
 				startIdx -= 6;
 				String[] holeCards = {input.substring(startIdx, startIdx+2), input.substring(startIdx+3, startIdx+5)};
 				opponent.updateOpponentAPW(holeCards);
+				opponent.updateBluffGraph(holeCards);
 			}
 			thisMatch.handCleanup();
 		}
