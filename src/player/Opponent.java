@@ -49,7 +49,6 @@ public class Opponent {
 		infoCount = 0;
 	}
 
-	
 	public void updateOpponentAPW(String[] holeCards) {
 		infoCount++;
 		
@@ -95,6 +94,9 @@ public class Opponent {
 	 * Some of our opponents won't vary their strategies based on what part of the game they're in
 	 * this is part of a pair of functions that determines if we need to separate the graph based on time.
 	 * 
+	 * TODO: modify this function so it doesn't run in n-squared. Should be able to compare a random set of points
+	 * from the larger graph to the smaller graph. That's at least n.
+	 * 
 	 * @param xA
 	 * @param yA
 	 * @param xB
@@ -114,18 +116,61 @@ public class Opponent {
 			yG = yA;
 		}
 		double totalDist = 0.0;
-		double minDist;
+		Double minDist;
 		for(int iS=0;iS<xS.size();iS++){
-			minDist = -1.0;
+			minDist = null;
 			for(int iG=0;iG<xG.size();iG++){
 				double dist = (xS.get(iS)-xG.get(iG))*(xS.get(iS)-xG.get(iG)) +
 								(yS.get(iS)-yG.get(iG))*(yS.get(iS)-yG.get(iG));
-				if(Math.abs(minDist+1) < .8 || dist < minDist){
+				if(minDist.equals(null) || dist < minDist){
 					minDist = dist;}
 			totalDist += minDist;
 			}
 		}
 		return new Double(totalDist/xS.size());
+	}
+	/**
+	 * Like compare scatter plot but uses a subset of random points from the larger graph instead of comparing every point.
+	 * 
+	 * Should be much faster.
+	 * 
+	 * @param xA
+	 * @param yA
+	 * @param xB
+	 * @param yB
+	 * @return
+	 */
+	private double approxCompareScatterPlots(ArrayList<Double> xA, ArrayList<Double> yA, ArrayList<Double> xB, ArrayList<Double> yB){
+		if(xA.size() != yA.size() || xB.size() != yB.size()) return -1.0; //Lists do not specify a valid graph
+		ArrayList<Double> xS = xA;
+		ArrayList<Double> yS = yA;
+		ArrayList<Double> xG = xB;
+		ArrayList<Double> yG = yB;
+		if(xA.size() > xB.size()){
+			xS = xB;
+			yS = yB;
+			xG = xA;
+			yG = yA;
+		}
+		int numRandPts = 50;
+		if(xG.size()<=numRandPts) return this.compareScatterPlots(xA, yA, xB, yB);
+		double totalDist = 0.0;
+		Double minDist;
+		int[] indicesToTest = new int[numRandPts];
+		for(int i=0;i<numRandPts;i++){
+			indicesToTest[i] = (int) Math.floor(xG.size()*Math.random());
+		}
+		for(int ind: indicesToTest){
+			minDist = null;
+			for(int iS=0;iS<xS.size();iS++){
+				double dist = (xS.get(iS)-xG.get(ind))*(xS.get(iS)-xG.get(ind)) +
+								(yS.get(iS)-yG.get(ind))*(yS.get(iS)-yG.get(ind));
+				if(minDist.equals(null) || dist < minDist){
+					minDist = dist;}
+			totalDist += minDist;
+			}
+		}
+		return new Double(totalDist/numRandPts);
 	}
 	/**
 	 * Compares every pair of plots to determine what graph we should use.
@@ -137,7 +182,9 @@ public class Opponent {
 	 */
 	private boolean useTimePlot(){
 		double totalDiff = 0.0;
-		double THRESHOLD = -1;
+		double amtHeight = 0.4/2;
+		double bluffHeight = 0.6/2;
+		double THRESHOLD = amtHeight*amtHeight + bluffHeight*bluffHeight;
 		ArrayList<Double> xA = new ArrayList<Double>(0);
 		ArrayList<Double> yA = new ArrayList<Double>(0);
 		ArrayList<Double> xB = new ArrayList<Double>(0);
@@ -155,7 +202,7 @@ public class Opponent {
 					}
 				}
 			}
-			totalDiff += this.compareScatterPlots(xA, yA, xB, yB);
+			totalDiff += this.approxCompareScatterPlots(xA, yA, xB, yB);
 		}
 		return totalDiff > THRESHOLD;
 		
@@ -181,7 +228,7 @@ public class Opponent {
 		String[] pf_tc = new String[0]; 
 		time_bg.add(0);
 		degree_bg.add(degreeBluffing(pf_tc,holeCards,match.potAt[0],match.oppWagerAt[0]));
-		amt_bg.add(new Double(match.oppWagerAt[0]/(match.potAt[0]+match.oppWagerAt[0])));
+		amt_bg.add(new Double(match.oppWagerAt[0]/match.stackSize));
 		//Flop
 		String[] f_tc = new String[3]; 
 		for(int i=0;i<3;i++){
@@ -189,7 +236,7 @@ public class Opponent {
 		}
 		time_bg.add(1);
 		degree_bg.add(degreeBluffing(f_tc,holeCards,match.potAt[1],match.oppWagerAt[1]));
-		amt_bg.add(new Double(match.oppWagerAt[1]/(match.potAt[1]+match.oppWagerAt[1])));
+		amt_bg.add(new Double(match.oppWagerAt[1]/match.stackSize));
 		//Turn
 		String[] t_tc = new String[4];
 		for(int i=0;i<4;i++){
@@ -197,7 +244,7 @@ public class Opponent {
 		}
 		time_bg.add(2);
 		degree_bg.add(degreeBluffing(t_tc,holeCards,match.potAt[2],match.oppWagerAt[2]));
-		amt_bg.add(new Double(match.oppWagerAt[2]/(match.potAt[2]+match.oppWagerAt[2])));
+		amt_bg.add(new Double(match.oppWagerAt[2]/match.stackSize));
 		//River
 		String[] r_tc = new String[5]; 
 		for(int i=0;i<5;i++){
@@ -205,7 +252,7 @@ public class Opponent {
 		}
 		time_bg.add(3);
 		degree_bg.add(degreeBluffing(r_tc,holeCards,match.potAt[3],match.oppWagerAt[3]));
-		amt_bg.add(new Double(match.oppWagerAt[3]/(match.potAt[3]+match.oppWagerAt[3])));
+		amt_bg.add(new Double(match.oppWagerAt[3]/match.stackSize));
 	}
 	
 
