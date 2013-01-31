@@ -87,7 +87,7 @@ public class Player {
 		if(toks[0].equals("NEWGAME")){
 			thisMatch = new Match(input);
 			opponent = new Opponent(toks[2], thisMatch, oddsGen, APWMap);
-			myBrain = new ExpectedReturnStrategy(thisMatch, opponent);
+			myBrain = new TypeBasedStrat(thisMatch, opponent);
 		}
 		else if(toks[0].equals("KEYVALUE")){
 			thisMatch.keyVals.put(toks[1], toks[2]);
@@ -165,13 +165,20 @@ public class Player {
 			}
 			
 			boolean aggressReact = false;
+			boolean passiveReact = false;
 			for (String a : thisMatch.lastActions) {
 				if (a.contains("BET") || a.contains("RAISE")) {
 					String[] aSplit = a.split(":");
 					if (aSplit[2].equals(opponent.name)) {
 						thisMatch.amtToCall = Integer.valueOf(aSplit[1]);
+						aggressReact = true;
 					}
-					aggressReact = true;
+				}
+				if (a.contains("CHECK") || a.contains("CALL")) {
+					String[] aSplit = a.split(":");
+					if (aSplit[1].equals(opponent.name)) {
+						passiveReact = true;
+					}
 				}
 			}
 			
@@ -189,7 +196,7 @@ public class Player {
 						thisMatch.riverMaxBetPercent = maxBetPercent;
 				}
 			}
-			else{
+			if (passiveReact) {
 				opponent.passiveActions++;
 			}
 			
@@ -203,8 +210,6 @@ public class Player {
 				String[] holeCards = {input.substring(startIdx, startIdx+2), input.substring(startIdx+3, startIdx+5)};
 				
 				opponent.updateOpponentAPW(holeCards);
-				
-				//opponent.updateBluffGraph(holeCards);
 			}
 			thisMatch.handCleanup();
 		}

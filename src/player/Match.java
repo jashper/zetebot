@@ -86,6 +86,11 @@ public class Match {
 		flopMaxBetPercent = 0;
 		turnMaxBetPercent = 0;
 		riverMaxBetPercent = 0;
+		
+		for (int i = 0; i < 4; i++) {
+			potAt[i] = 0;
+			oppWagerAt[i] = 0;
+		}
 	}
 
 }

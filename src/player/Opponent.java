@@ -67,12 +67,36 @@ public class Opponent {
 	}
 	
 	public String opponentType(){
-		double betRatio = this.aggresiveActions/this.passiveActions;
+		double betRatio = 0;
+		if (this.passiveActions == 0) {
+			return "TIGHT_AGGRESSIVE";
+		} else {betRatio = this.aggresiveActions/this.passiveActions;}
+		
 		double aveAPW = 0.0;
-		for(double d: degree_bg){
-			aveAPW += d;
+		int count = 0;
+		
+		if (preFlopAPW != 0) {
+			aveAPW += preFlopAPW;
+			count++;
 		}
-		aveAPW /= degree_bg.size();
+		if (flopAPW != 0) {
+			aveAPW += flopAPW;
+			count++;
+		}
+		if (turnAPW != 0) {
+			aveAPW += turnAPW;
+			count++;
+		}
+		if (riverAPW != 0) {
+			aveAPW += riverAPW;
+			count++;
+		}
+		
+		if (count == 0) {
+			return "TIGHT_AGGRESSIVE";
+		}
+		
+		aveAPW /= count;
 		
 		if(betRatio<2){
 			if(aveAPW >.8) return "TIGHT_PASSIVE";
