@@ -32,6 +32,16 @@ public class Match {
 	public HashMap<String,String> keyVals;
 	public int handId;
 	
+	// Debug variables
+	public double preFlopMaxBetPercent;
+	public double flopMaxBetPercent;
+	public double turnMaxBetPercent;
+	public double riverMaxBetPercent;
+	public ArrayList<String> dataPointsPreFlop;
+	public ArrayList<String> dataPointsFlop;
+	public ArrayList<String> dataPointsTurn;
+	public ArrayList<String> dataPointsRiver;
+	
 	// NEWGAME yourName oppName stackSize bb numHands timeBank
 	public Match(String _matchInfo){
 		String[] info = _matchInfo.split(" ");
@@ -51,6 +61,15 @@ public class Match {
 		tableCards = new ArrayList<String>();
 		discard = null;
 		lastActions = new ArrayList<String>();
+		
+		preFlopMaxBetPercent = 0;
+		flopMaxBetPercent = 0;
+		turnMaxBetPercent = 0;
+		riverMaxBetPercent = 0;
+		dataPointsPreFlop = new ArrayList<String>();
+		dataPointsFlop = new ArrayList<String>();
+		dataPointsTurn = new ArrayList<String>();
+		dataPointsRiver = new ArrayList<String>();
 	}
 	
 	public void handCleanup() {
@@ -62,6 +81,11 @@ public class Match {
 		tableCards.clear();
 		discard = null;
 		lastActions.clear();
+		
+		preFlopMaxBetPercent = 0;
+		flopMaxBetPercent = 0;
+		turnMaxBetPercent = 0;
+		riverMaxBetPercent = 0;
 	}
 
 }

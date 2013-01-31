@@ -2,7 +2,9 @@ package tools;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 public class OddsGenerator {
 	
@@ -299,6 +301,43 @@ public class OddsGenerator {
 		double[] odds = getDiscardOdds(holeCardA, holeCardB, holeCardC);
 		
 		return (termAB*odds[2] + termBC*odds[0] + termAC*odds[1]);
+	}
+	
+	public double getPreFlopOddsEnemy(int holeCardA, int holeCardB, int boardCardA, int boardCardB, int boardCardC, Map<String, Double> APWMap) {
+		int[] cardsToRemove = {holeCardA, holeCardB, boardCardA, boardCardB, boardCardC};
+		Integer[] newCards = getNewCards(cardsToRemove, ints);
+		ArrayList<Integer> possibleCards = new ArrayList<Integer>();
+		ArrayList<Double> possibleOdds = new ArrayList<Double>();
+		
+		for (int a = 0; a < 47; a++) {
+			int discardCard = newCards[a];
+			boolean[] toDiscard = findDiscard(holeCardA, holeCardB, discardCard, boardCardA, boardCardB, boardCardC);
+			if (toDiscard[2]) {
+				possibleCards.add(discardCard);
+			}
+		}
+		
+
+		for (Integer holeCardC : possibleCards) {
+			int[] cards = {holeCardA, holeCardB, holeCardC};
+			Arrays.sort(cards);
+			String lookupStr = cards[0] + " " + cards[1] + " " + cards[2];
+			if (APWMap.containsKey(lookupStr)) {
+				double odds = APWMap.get(lookupStr) / 100.0;
+				possibleOdds.add(odds);
+			}
+		}
+		
+		double oddsToReturn = 0.0;
+		int count = 0;
+		for (Double odds : possibleOdds) {
+			count++;
+			oddsToReturn += odds;
+		}
+		if (count != 0) {
+			oddsToReturn /= count;
+		}
+		return oddsToReturn;
 	}
 	
 	public double getFlopOdds(int holeCardA, int holeCardB, int discardCard, int boardCardA, int boardCardB, int boardCardC) {

@@ -86,13 +86,29 @@ public class Player {
 		String[] toks = input.split(" ");
 		if(toks[0].equals("NEWGAME")){
 			thisMatch = new Match(input);
-			opponent = new Opponent(toks[2], thisMatch, oddsGen);
+			opponent = new Opponent(toks[2], thisMatch, oddsGen, APWMap);
 			myBrain = new ExpectedReturnStrategy(thisMatch, opponent);
 		}
 		else if(toks[0].equals("KEYVALUE")){
 			thisMatch.keyVals.put(toks[1], toks[2]);
 		}
 		else if(toks[0].equals("REQUESTKEYVALUES")){
+			System.out.println("PreFlop Datapoints:");
+			for (String s : thisMatch.dataPointsPreFlop) {
+				System.out.println(s);
+			}
+			System.out.println("Flop Datapoints:");
+			for (String s : thisMatch.dataPointsFlop) {
+				System.out.println(s);
+			}
+			System.out.println("Turn Datapoints:");
+			for (String s : thisMatch.dataPointsTurn) {
+				System.out.println(s);
+			}
+			System.out.println("River Datapoints:");
+			for (String s : thisMatch.dataPointsRiver) {
+				System.out.println(s);
+			}
 			return "FINISH";
 		}
 		else if(toks[0].equals("NEWHAND")){
@@ -148,13 +164,28 @@ public class Player {
 				}
 			}
 			
+			boolean aggressReact = false;
 			for (String a : thisMatch.lastActions) {
-				if (a.contains("BET")) {
+				if (a.contains("BET") || a.contains("RAISE")) {
 					String[] aSplit = a.split(":");
 					if (aSplit[2].equals(opponent.name)) {
 						thisMatch.amtToCall = Integer.valueOf(aSplit[1]);
 					}
-					break;
+					aggressReact = true;
+				}
+			}
+			
+			if (aggressReact) {
+				double maxBetPercent = (thisMatch.amtToCall * 1.0) / (thisMatch.pot - thisMatch.amtToCall);
+				switch (thisMatch.tableCards.size()) {
+					case 0:
+						thisMatch.preFlopMaxBetPercent = maxBetPercent;
+					case 3:
+						thisMatch.flopMaxBetPercent = maxBetPercent;
+					case 4:
+						thisMatch.turnMaxBetPercent = maxBetPercent;
+					case 5:
+						thisMatch.riverMaxBetPercent = maxBetPercent;
 				}
 			}
 			
@@ -162,12 +193,14 @@ public class Player {
 			return myBrain.getAction(legalActions); 
 		}
 		else if(toks[0].equals("HANDOVER")){
-			if (input.contains("SHOW") && thisMatch.tableCards.size() == 5) {
-				int startIdx = input.indexOf(opponent.name);
+			if (input.contains("SHOW") && thisMatch.tableCards.size() >= 3) {
+				int startIdx = input.indexOf(opponent.name, input.indexOf("SHOW"));
 				startIdx -= 6;
 				String[] holeCards = {input.substring(startIdx, startIdx+2), input.substring(startIdx+3, startIdx+5)};
+				
 				opponent.updateOpponentAPW(holeCards);
-				opponent.updateBluffGraph(holeCards);
+				
+				//opponent.updateBluffGraph(holeCards);
 			}
 			thisMatch.handCleanup();
 		}

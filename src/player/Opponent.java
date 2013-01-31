@@ -1,6 +1,7 @@
 package player;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.lang.Math;
 import tools.OddsGenerator;
 
@@ -16,16 +17,21 @@ import tools.OddsGenerator;
 public class Opponent {
 	public final String name;
 	public final Match match;
-	
 	private final OddsGenerator oddsGen;
+	private final Map<String, Double> APWMap;
+	
+	public double preFlopAPW;
 	public double flopAPW;
 	public double turnAPW;
 	public double riverAPW;
 	public double[] flopAPWCat;
 	public double[] turnAPWCat;
 	public double[] riverAPWCat;
-
-	public int infoCount;
+	
+	public int preFlopInfoCount;
+	public int flopInfoCount;
+	public int turnInfoCount;
+	public int riverInfoCount;
 	
 	//Bluffing Data, each list corresponds to an axis on the graph.
 	private ArrayList<Integer> time_bg;
@@ -33,11 +39,13 @@ public class Opponent {
 	private ArrayList<Double> amt_bg;
 	
 	
-	public Opponent(String _name, Match match, OddsGenerator oddsGen){
+	public Opponent(String _name, Match match, OddsGenerator oddsGen, Map<String, Double> APWMap){
 		name = _name;
 		this.match = match;
 		this.oddsGen = oddsGen;
+		this.APWMap = APWMap;
 		
+		preFlopAPW = 0;
 		flopAPW = 0;
 		turnAPW = 0;
 		riverAPW = 0;
@@ -46,37 +54,98 @@ public class Opponent {
 		turnAPWCat = new double[9];
 		riverAPWCat = new double[9];
 
-		infoCount = 0;
+		preFlopInfoCount = 0;
+		flopInfoCount = 0;
+		turnInfoCount = 0;
+		riverInfoCount = 0;
 	}
 
 	public void updateOpponentAPW(String[] holeCards) {
-		infoCount++;
-		
 		int[] holeInts = new int[2];
 		for (int i = 0; i < 2 ; i++) {
 			holeInts[i] = oddsGen.stringToInt(holeCards[i]);
 		}
 		
-		int[] tableInts = new int[5];
-		for (int i = 0; i < 5; i++) {
+		int tableSize = match.tableCards.size();
+		int[] tableInts = new int[tableSize];
+		for (int i = 0; i < tableSize; i++) {
 			tableInts[i] = oddsGen.stringToInt(match.tableCards.get(i));
 		}
 		
-		double[] newFlopAPWCat = oddsGen.getFlopOddsEnemy(holeInts[0], holeInts[1], tableInts[0], tableInts[1], tableInts[2]);
-		double[] newTurnAPWCat = oddsGen.getTurnOddsEnemy(holeInts[0], holeInts[1], tableInts[0], tableInts[1], tableInts[2], tableInts[3]);
-		double[] newRiverAPWCat = oddsGen.getRiverOddsEnemy(holeInts[0], holeInts[1], tableInts[0], tableInts[1], tableInts[2], tableInts[3], tableInts[4]);
+		double newPreFlopAPW;
+		double[] newFlopAPWCat = null;
+		double[] newTurnAPWCat = null;
+		double[] newRiverAPWCat = null;
 		
-		flopAPW = 0;
-		turnAPW = 0;
-		riverAPW = 0;
-		for (int i = 0; i < 9; i++) {
-			flopAPWCat[i] = (1.0 / infoCount)*newFlopAPWCat[i] + ((infoCount - 1.0) / infoCount) * flopAPWCat[i];
-			flopAPW += flopAPWCat[i];
-			turnAPWCat[i] = (1.0 / infoCount)*newTurnAPWCat[i] + ((infoCount - 1.0) / infoCount) * turnAPWCat[i];
-			turnAPW += turnAPWCat[i];
-			riverAPWCat[i] = (1.0 / infoCount)*newRiverAPWCat[i] + ((infoCount - 1.0) / infoCount) * riverAPWCat[i];
-			riverAPW += riverAPWCat[i];
+		String dataPoint;
+		if (tableSize >= 3) {
+			flopInfoCount++;
+			flopAPW = 0;
+			newFlopAPWCat = oddsGen.getFlopOddsEnemy(holeInts[0], holeInts[1], tableInts[0], tableInts[1], tableInts[2]);
+			if (match.flopMaxBetPercent > 0) {
+				double newFlopAPW = 0;
+				for (double num : newFlopAPWCat) {
+					newFlopAPW += num;
+				}
+				dataPoint = match.flopMaxBetPercent + " " + newFlopAPW;
+				match.dataPointsFlop.add(dataPoint);
+			}
+			
+			if (tableSize >= 4) {
+				turnInfoCount++;
+				turnAPW = 0;
+				newTurnAPWCat = oddsGen.getTurnOddsEnemy(holeInts[0], holeInts[1], tableInts[0], tableInts[1], tableInts[2], tableInts[3]);
+				if (match.turnMaxBetPercent > 0) {
+					double newTurnAPW = 0;
+					for (double num : newTurnAPWCat) {
+						newTurnAPW += num;
+					}
+					dataPoint = match.turnMaxBetPercent + " " + newTurnAPW;
+					match.dataPointsTurn.add(dataPoint);
+				}
+				
+				if (tableSize == 5) {
+					riverInfoCount++;
+					riverAPW = 0;
+					newRiverAPWCat = oddsGen.getRiverOddsEnemy(holeInts[0], holeInts[1], tableInts[0], tableInts[1], tableInts[2], tableInts[3], tableInts[4]);
+					if (match.riverMaxBetPercent > 0) {
+						double newRiverAPW = 0;
+						for (double num : newRiverAPWCat) {
+							newRiverAPW += num;
+						}
+						dataPoint = match.riverMaxBetPercent + " " + newRiverAPW;
+						match.dataPointsRiver.add(dataPoint);
+					}
+				}
+			}
+			
+			
+			newPreFlopAPW = oddsGen.getPreFlopOddsEnemy(holeInts[0], holeInts[1], tableInts[0], tableInts[1], tableInts[2], APWMap);
+			if (newPreFlopAPW > 0) {
+				preFlopInfoCount++;
+				preFlopAPW = (1.0 / preFlopInfoCount)*newPreFlopAPW + ((preFlopInfoCount - 1.0) / preFlopInfoCount) * preFlopAPW;;
+				if (match.preFlopMaxBetPercent > 0) {
+					dataPoint = match.preFlopMaxBetPercent + " " + newPreFlopAPW;
+					match.dataPointsPreFlop.add(dataPoint);
+				}
+			}
+			
+			for (int i = 0; i < 9; i++) {
+				flopAPWCat[i] = (1.0 / flopInfoCount)*newFlopAPWCat[i] + ((flopInfoCount - 1.0) / flopInfoCount) * flopAPWCat[i];
+				flopAPW += flopAPWCat[i];
+				
+				if (newTurnAPWCat != null) {
+					turnAPWCat[i] = (1.0 / turnInfoCount)*newTurnAPWCat[i] + ((turnInfoCount - 1.0) / turnInfoCount) * turnAPWCat[i];
+					turnAPW += turnAPWCat[i];
+				}
+				
+				if (newRiverAPWCat != null) {
+					riverAPWCat[i] = (1.0 / riverInfoCount)*newRiverAPWCat[i] + ((riverInfoCount - 1.0) / riverInfoCount) * riverAPWCat[i];
+					riverAPW += riverAPWCat[i];
+				}
+			}
 		}
+		
 	}
 	
 	// TODO: implement

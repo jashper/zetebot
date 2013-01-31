@@ -38,13 +38,12 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 		System.out.println("#######oppAPWCat: "+avrgOppAPWCat[0]+" "+avrgOppAPWCat[1]+" "+
 							avrgOppAPWCat[2]+" "+avrgOppAPWCat[3]+" "+avrgOppAPWCat[4]+" "+avrgOppAPWCat[5]+" "+
 							avrgOppAPWCat[6]+" "+avrgOppAPWCat[7]+" "+avrgOppAPWCat[8]);
-		System.out.println("#######weight: "+weight);
 		
-		if (match.playerAPW >= 0.82 && avrgOppAPW <= 0.55 && opponent.infoCount >= 10) {
+		if (match.playerAPW >= 0.82 && avrgOppAPW <= 0.55 && opponent.riverInfoCount >= 10) {
 			return "BET:"+maxBet;
 		}
 		
-		if (match.playerAPW <= 0.70 && opponent.infoCount < 10) {
+		if (match.playerAPW <= 0.70 && opponent.riverInfoCount < 10) {
 			return "CHECK";
 		}
 		
@@ -84,21 +83,20 @@ public class ExpectedReturnStrategy extends StrategyBrain{
 		System.out.println("#######oppAPWCat: "+avrgOppAPWCat[0]+" "+avrgOppAPWCat[1]+" "+
 							avrgOppAPWCat[2]+" "+avrgOppAPWCat[3]+" "+avrgOppAPWCat[4]+" "+avrgOppAPWCat[5]+" "+
 							avrgOppAPWCat[6]+" "+avrgOppAPWCat[7]+" "+avrgOppAPWCat[8]);
-		System.out.println("#######weight: "+weight);
 		
-		if (match.playerAPW >= 0.82 && avrgOppAPW <= 0.55 && opponent.infoCount >= 10) {
+		if (match.playerAPW >= 0.82 && avrgOppAPW <= 0.55 && opponent.riverInfoCount >= 10) {
 			return "RAISE:"+maxRaise;
 		}
 		
-		if (match.playerAPW >= 0.5 && opponent.infoCount < 10) {
+		if (match.playerAPW >= 0.5 && opponent.riverInfoCount < 10) {
 			return "CALL";
 		}
 		
-		if (match.playerAPW - avrgOppAPW >= 0.3 && opponent.infoCount >= 10  && match.tableCards.size() >= 3) {
+		if (match.playerAPW - avrgOppAPW >= 0.3 && opponent.riverInfoCount >= 10  && match.tableCards.size() >= 3) {
 			return "CALL";
 		}
 		
-		if (avrgOppAPW - match.playerAPW >= 0.25 && opponent.infoCount >= 10) {
+		if (avrgOppAPW - match.playerAPW >= 0.25 && opponent.riverInfoCount >= 10) {
 			return "FOLD";
 		}
 		

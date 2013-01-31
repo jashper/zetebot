@@ -48,6 +48,8 @@ public abstract class StrategyBrain {
 	
 	protected double getAvrgOppAPW(int boardCount) {
 		switch (boardCount) {
+			case 0:
+				return opponent.preFlopAPW;
 			case 3:
 				return opponent.flopAPW;
 			case 4:
