@@ -176,6 +176,7 @@ public class Player {
 			}
 			
 			if (aggressReact) {
+				opponent.aggresiveActions++;
 				double maxBetPercent = (thisMatch.amtToCall * 1.0) / (thisMatch.pot - thisMatch.amtToCall);
 				switch (thisMatch.tableCards.size()) {
 					case 0:
@@ -187,6 +188,9 @@ public class Player {
 					case 5:
 						thisMatch.riverMaxBetPercent = maxBetPercent;
 				}
+			}
+			else{
+				opponent.passiveActions++;
 			}
 			
 			
