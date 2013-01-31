@@ -129,9 +129,9 @@ public class Player {
 				switch (tableCount){
 					case 3: thisMatch.potAt[1] = thisMatch.pot;
 							break;
-					case 4: thisMatch.potAt[1] = thisMatch.pot;
+					case 4: thisMatch.potAt[2] = thisMatch.pot;
 							break;
-					case 5: thisMatch.potAt[1] = thisMatch.pot;
+					case 5: thisMatch.potAt[3] = thisMatch.pot;
 							break;
 				}
 				for (int i = 3+myTableCount; i < tableCount+3; i++) {
