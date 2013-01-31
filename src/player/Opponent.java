@@ -33,6 +33,9 @@ public class Opponent {
 	public int turnInfoCount;
 	public int riverInfoCount;
 	
+	public int aggresiveActions; 
+	public int passiveActions;
+	
 	//Bluffing Data, each list corresponds to an axis on the graph.
 	private ArrayList<Integer> time_bg;
 	private ArrayList<Double> degree_bg;
@@ -58,6 +61,29 @@ public class Opponent {
 		flopInfoCount = 0;
 		turnInfoCount = 0;
 		riverInfoCount = 0;
+		
+		this.aggresiveActions = 0;
+		this.passiveActions = 0;
+	}
+	
+	public String opponentType(){
+		double betRatio = this.aggresiveActions/this.passiveActions;
+		double aveAPW = 0.0;
+		for(double d: degree_bg){
+			aveAPW += d;
+		}
+		aveAPW /= degree_bg.size();
+		
+		if(betRatio<2){
+			if(aveAPW >.8) return "TIGHT_PASSIVE";
+			else if(aveAPW >.4) return "LOOSE_PASSIVE";
+			else return "MANIAC_PASSIVE";
+		}
+		else{
+			if(aveAPW >.8) return "TIGHT_AGGRESSIVE";
+			else if(aveAPW >.4) return "LOOSE_AGGRESSIVE";
+			else return "MANIAC_AGGRESSIVE";
+		}
 	}
 
 	public void updateOpponentAPW(String[] holeCards) {
@@ -147,14 +173,21 @@ public class Opponent {
 		}
 		
 	}
-	
-	// TODO: implement
-	private double getAPW(String[] tableCards, String[] holeCards){
-		return 0.0;
-	}
-	private double degreeBluffing(String[] tableCards, String[] holeCards, int pot, int wager){
-		double APW = getAPW(tableCards,holeCards);
-		return new Double((wager-pot*APW)/match.stackSize);
+
+	private double degreeBluffing(String[] tableCards, int pot, int wager){
+		double APW = 0.0;
+		switch(tableCards.length){
+			case 0: APW =  this.preFlopAPW;
+					break;
+			case 3: APW =  this.flopAPW;
+					break;
+			case 4: APW =  this.turnAPW;
+					break;
+			case 5: APW =  this.riverAPW;
+					break;
+			}
+		return APW;
+		//return new Double((wager-pot*APW)/match.stackSize);
 	}
 	
 	/**
@@ -277,7 +310,8 @@ public class Opponent {
 		
 	}
 	
-	public double estimateDegreeBluffing(int time, double normalAmt){
+	public double estimateOppAPW(int time, double normalAmt){
+		int MIN_NUM_DATA_PTS = 20;
 		double totalWeight = 0.0;
 		double degreeBluffing = 0.0;
 		boolean useTime = this.useTimePlot();
@@ -289,14 +323,15 @@ public class Opponent {
 				totalWeight += weight;
 			}
 		}
-		return degreeBluffing/totalWeight;
+		if(!(!useTime && time_bg.size()>MIN_NUM_DATA_PTS || time_bg.size()>MIN_NUM_DATA_PTS*4)) return -1.0;
+		return (degreeBluffing/totalWeight);
 	}
 	public void updateBluffGraph(String[] holeCards){
 		String[] tableCards = (String[]) match.tableCards.toArray();
 		//PreFlop
 		String[] pf_tc = new String[0]; 
 		time_bg.add(0);
-		degree_bg.add(degreeBluffing(pf_tc,holeCards,match.potAt[0],match.oppWagerAt[0]));
+		degree_bg.add(degreeBluffing(pf_tc,match.potAt[0],match.oppWagerAt[0]));
 		amt_bg.add(new Double(match.oppWagerAt[0]/match.stackSize));
 		//Flop
 		String[] f_tc = new String[3]; 
@@ -304,7 +339,7 @@ public class Opponent {
 			f_tc[i] = tableCards[i];
 		}
 		time_bg.add(1);
-		degree_bg.add(degreeBluffing(f_tc,holeCards,match.potAt[1],match.oppWagerAt[1]));
+		degree_bg.add(degreeBluffing(f_tc,match.potAt[1],match.oppWagerAt[1]));
 		amt_bg.add(new Double(match.oppWagerAt[1]/match.stackSize));
 		//Turn
 		String[] t_tc = new String[4];
@@ -312,7 +347,7 @@ public class Opponent {
 			t_tc[i] = tableCards[i];
 		}
 		time_bg.add(2);
-		degree_bg.add(degreeBluffing(t_tc,holeCards,match.potAt[2],match.oppWagerAt[2]));
+		degree_bg.add(degreeBluffing(t_tc,match.potAt[2],match.oppWagerAt[2]));
 		amt_bg.add(new Double(match.oppWagerAt[2]/match.stackSize));
 		//River
 		String[] r_tc = new String[5]; 
@@ -320,7 +355,7 @@ public class Opponent {
 			f_tc[i] = tableCards[i];
 		}
 		time_bg.add(3);
-		degree_bg.add(degreeBluffing(r_tc,holeCards,match.potAt[3],match.oppWagerAt[3]));
+		degree_bg.add(degreeBluffing(r_tc,match.potAt[3],match.oppWagerAt[3]));
 		amt_bg.add(new Double(match.oppWagerAt[3]/match.stackSize));
 	}
 	
