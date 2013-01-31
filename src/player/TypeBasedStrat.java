@@ -11,10 +11,12 @@ public class TypeBasedStrat extends StrategyBrain {
 		String oppType = opponent.opponentType();
 		if(oppType.equals("TIGHT_PASSIVE")){
 			switch(match.tableCards.size()){
-			case 0: return "CHECK";
-			default:
-				if(match.playerAPW>.925) return "CHECK";
-				else return "FOLD";
+				case 0:
+					return "CHECK";
+				default:
+					if(match.playerAPW>.925){
+						return "CHECK";
+					} else {return "FOLD";}
 			}
 		}
 		else if(oppType.equals("LOOSE_PASSIVE")){
@@ -25,10 +27,10 @@ public class TypeBasedStrat extends StrategyBrain {
 				if(minBet <= betAmt ){
 					if(maxBet < betAmt){
 						return "BET:"+maxBet;
-					}else{
+					} else {
 						return "BET:"+((int) betAmt);
 					}
-				}else{
+				} else {
 					return "CHECK";
 				}
 			}
@@ -58,11 +60,14 @@ public class TypeBasedStrat extends StrategyBrain {
 		else if(oppType.equals("TIGHT_AGGRESSIVE")){
 			if(oppType.equals("TIGHT_PASSIVE")){
 				switch(match.tableCards.size()){
-				case 0: return "BET:"+3*match.bb;//Try to get them to fold 
-				default:
-					if(match.playerAPW>.925) return "CHECK";
-					else return "FOLD";
+					case 0:
+						return "BET:"+3*match.bb;//Try to get them to fold 
+					default:
+						if(match.playerAPW>.925){
+							return "CHECK";
+						} else {return "FOLD";}
 				}
+			}
 		}
 		else if(oppType.equals("LOOSE_AGGRESSIVE")){
 			if(match.playerAPW>.85){
@@ -102,7 +107,7 @@ public class TypeBasedStrat extends StrategyBrain {
 				return "CHECK";
 			}
 		}
-		}
+		return null;
 	}
 
 	@Override
@@ -110,10 +115,12 @@ public class TypeBasedStrat extends StrategyBrain {
 		String oppType = opponent.opponentType();
 		if(oppType.equals("TIGHT_PASSIVE")){
 			switch(match.tableCards.size()){
-			case 0: return "RAISE:"+3*match.bb;
-			default:
-				if(match.playerAPW>.925) return "CALL";
-				else return "FOLD";
+				case 0:
+					return "RAISE:"+3*match.bb;
+				default:
+					if(match.playerAPW>.925) {
+						return "CALL";
+					} else {return "FOLD";}
 			}
 		}
 		else if(oppType.equals("LOOSE_PASSIVE")){
@@ -157,11 +164,14 @@ public class TypeBasedStrat extends StrategyBrain {
 		else if(oppType.equals("TIGHT_AGGRESSIVE")){
 			if(oppType.equals("TIGHT_PASSIVE")){
 				switch(match.tableCards.size()){
-				case 0: return "RAISE:"+3*match.bb;//Try to get them to fold 
-				default:
-					if(match.playerAPW>.925) return "CALL";
-					else return "FOLD";
+					case 0:
+						return "RAISE:"+3*match.bb;//Try to get them to fold 
+					default:
+						if(match.playerAPW>.925){
+							return "CALL";
+						} else {return "FOLD";}
 				}
+			}
 		}
 		else if(oppType.equals("LOOSE_AGGRESSIVE")){
 			if(match.playerAPW>.85){
@@ -201,6 +211,7 @@ public class TypeBasedStrat extends StrategyBrain {
 				return "CALL";
 			}
 		}
+		return null;
 	}
 
 }
